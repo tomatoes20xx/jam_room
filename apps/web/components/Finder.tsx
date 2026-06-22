@@ -154,14 +154,15 @@ export function Finder({ initialRooms, initialTotal }: { initialRooms: RoomCardT
           </div>
 
           {/* search bar */}
-          <div style={{ marginTop: 42, display: "flex", boxShadow: "7px 7px 0 var(--ink)", maxWidth: 760, border: "3px solid var(--ink)" }}>
+          <div style={{ marginTop: 42, display: "flex", flexWrap: "wrap", boxShadow: "7px 7px 0 var(--ink)", maxWidth: 760, border: "3px solid var(--ink)" }}>
             <div style={{ background: "var(--ink)", color: "var(--paper)", display: "flex", alignItems: "center", padding: "0 16px", fontSize: 22 }}>⌕</div>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t("finder.search")}
               style={{
-                flex: 1,
+                flex: "1 1 200px",
+                minWidth: 0,
                 border: 0,
                 outline: "none",
                 background: "var(--paper)",
@@ -174,6 +175,7 @@ export function Finder({ initialRooms, initialTotal }: { initialRooms: RoomCardT
             <button
               onClick={() => setQuery("")}
               style={{
+                flex: "1 1 120px",
                 border: 0,
                 borderLeft: "3px solid var(--ink)",
                 background: "var(--red)",
@@ -181,7 +183,7 @@ export function Finder({ initialRooms, initialTotal }: { initialRooms: RoomCardT
                 fontFamily: sectionHeading,
                 letterSpacing: 1,
                 fontSize: 16,
-                padding: "0 22px",
+                padding: "12px 22px",
                 cursor: "pointer",
               }}
             >

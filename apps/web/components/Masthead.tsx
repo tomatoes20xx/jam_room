@@ -9,18 +9,8 @@ export function Masthead() {
   const { t } = useT();
   return (
     <header style={{ position: "relative", background: "var(--dark)", color: "var(--paper)", padding: "18px 28px 30px", zIndex: 5 }}>
-      <div
-        style={{
-          maxWidth: 1180,
-          margin: "0 auto",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 24,
-          flexWrap: "wrap",
-        }}
-      >
-        <Link href="/" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: 14 }}>
+      <div className="jr-masthead">
+        <Link href="/" className="jr-masthead-brand" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: 14 }}>
           <div
             style={{
               background: "var(--red)",
@@ -55,8 +45,9 @@ export function Masthead() {
             </div>
           </div>
         </Link>
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+        <div className="jr-masthead-lang">
           <div
+            className="jr-masthead-city"
             style={{
               fontFamily: "var(--font-special-elite), monospace",
               fontSize: 13,
@@ -72,6 +63,8 @@ export function Masthead() {
             {t("masthead.country")}
           </div>
           <LangToggle />
+        </div>
+        <div className="jr-masthead-actions">
           <SavedBadge />
           <AuthNav />
         </div>

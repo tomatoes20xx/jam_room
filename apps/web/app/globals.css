@@ -97,6 +97,38 @@ textarea:focus {
     opacity: 1;
   }
 }
+/* Masthead layout. On wide screens the brand sits left and the city/lang/
+   actions cluster packs to the right (brand's auto margin pushes them over).
+   On narrow screens the language toggle stays top-right next to the brand,
+   the city label is hidden, and the saved/profile actions drop to their own
+   full-width row below. */
+.jr-masthead {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px 24px;
+}
+.jr-masthead-brand {
+  margin-right: auto;
+}
+.jr-masthead-lang,
+.jr-masthead-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+@media (max-width: 768px) {
+  .jr-masthead-city {
+    display: none;
+  }
+  .jr-masthead-actions {
+    flex-basis: 100%;
+    justify-content: flex-start;
+  }
+}
+
 /* Film-grain overlay used on the root */
 .jr-grain {
   pointer-events: none;
