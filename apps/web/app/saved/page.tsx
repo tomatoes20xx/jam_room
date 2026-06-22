@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { RoomCard as RoomCardType } from "@jamroom/shared";
 import { api } from "@/lib/api";
 import { useSaved } from "@/lib/useSaved";
@@ -15,27 +16,26 @@ const elite = "var(--font-special-elite), monospace";
 
 export default function SavedPage() {
   const { t } = useT();
+  const router = useRouter();
   const { saved, isSaved, toggle } = useSaved();
   const { data: session, isPending } = useSession();
   const userId = session?.user?.id ?? null;
   const [serverRooms, setServerRooms] = useState<RoomCardType[]>([]);
 
-  // Signed-in: the server is the source of truth — fetch the saved cards
-  // directly. Signed-out: saves live only in localStorage, so resolve them
-  // against the catalog (a small first page is plenty for anonymous use).
-  // Wait for the session to resolve so we don't fetch the wrong source first.
+  // Saved rooms are account-only. Send anonymous visitors to sign in; for the
+  // signed-in user, fetch their saved cards straight from the server.
   useEffect(() => {
     if (isPending) return;
-    if (userId) {
-      api.listSaved().then(setServerRooms).catch(() => setServerRooms([]));
-    } else {
-      api.listRooms({ limit: 60 }).then((res) => setServerRooms(res.rooms)).catch(() => setServerRooms([]));
+    if (!userId) {
+      router.replace("/login");
+      return;
     }
-  }, [isPending, userId]);
+    api.listSaved().then(setServerRooms).catch(() => setServerRooms([]));
+  }, [isPending, userId, router]);
 
   // Intersect with the live saved set so an optimistic unsave drops the card
-  // immediately (without refetching). For signed-in users serverRooms already
-  // is the saved set, so this only filters out anything just unsaved.
+  // immediately (serverRooms already is the saved set, so this only removes
+  // anything just unsaved this session).
   const rooms = serverRooms.filter((r) => saved.includes(r.id));
 
   return (

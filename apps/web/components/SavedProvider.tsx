@@ -1,20 +1,9 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useSession } from "@/lib/auth-client";
-
-const KEY = "jamroom_saved";
-
-function readLocal(): string[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const v = JSON.parse(localStorage.getItem(KEY) || "[]");
-    return Array.isArray(v) ? v : [];
-  } catch {
-    return [];
-  }
-}
 
 type SavedContextValue = {
   saved: string[];
@@ -26,63 +15,55 @@ const SavedContext = createContext<SavedContextValue | null>(null);
 
 /**
  * Single source of truth for saved rooms, mounted once at the app root.
- * Without this, every component calling useSaved() ran its own effect and its
- * own /saved fetch (and Strict Mode doubled each), causing redundant calls.
+ * Saved rooms live ONLY on the server (the SavedRoom table) — nothing is kept
+ * in localStorage. State is loaded for the signed-in user and cleared on
+ * sign-out so one user's saves never linger for the next.
  */
 export function SavedProvider({ children }: { children: React.ReactNode }) {
-  const { data: session } = useSession();
+  const router = useRouter();
+  const { data: session, isPending } = useSession();
   // Depend on the stable user-id string, not the session object (its identity
   // changes every render, which would re-run the effect endlessly).
   const userId = session?.user?.id ?? null;
   const [saved, setSaved] = useState<string[]>([]);
 
   useEffect(() => {
-    setSaved(readLocal());
-  }, []);
-
-  useEffect(() => {
-    if (!userId) return;
+    if (isPending) return;
+    // Signed out → no saved rooms. This is also what clears the previous
+    // user's saves the moment they log out.
+    if (!userId) {
+      setSaved([]);
+      return;
+    }
     let cancelled = false;
-    // On login, push any saves made while logged out up to the account before
-    // adopting the server set, so anonymous saves aren't silently dropped.
-    const local = readLocal();
     api
       .listSaved()
-      .then(async (rooms) => {
-        const serverIds = rooms.map((r) => r.id);
-        const toPush = local.filter((id) => !serverIds.includes(id));
-        await Promise.all(toPush.map((id) => api.save(id).catch(() => {})));
-        if (cancelled) return;
-        const merged = Array.from(new Set([...serverIds, ...toPush]));
-        setSaved(merged);
-        localStorage.setItem(KEY, JSON.stringify(merged));
+      .then((rooms) => {
+        if (!cancelled) setSaved(rooms.map((r) => r.id));
       })
       .catch(() => {
-        /* stay with local */
+        if (!cancelled) setSaved([]);
       });
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [isPending, userId]);
 
   const toggle = useCallback(
     (id: string) => {
-      // Decide and fire the side effect ONCE, outside the state updater.
+      // Saving is account-only now — send anonymous users to sign in.
+      if (!userId) {
+        router.push("/login");
+        return;
+      }
       const has = saved.includes(id);
-      const next = has ? saved.filter((x) => x !== id) : [...saved, id];
-      setSaved(next);
-      try {
-        localStorage.setItem(KEY, JSON.stringify(next));
-      } catch {
-        /* ignore */
-      }
-      if (userId) {
-        (has ? api.unsave(id) : api.save(id)).catch(() => {
-          /* best effort */
-        });
-      }
+      setSaved(has ? saved.filter((x) => x !== id) : [...saved, id]); // optimistic
+      (has ? api.unsave(id) : api.save(id)).catch(() => {
+        // Roll back if the write fails — the server is the source of truth.
+        setSaved((cur) => (has ? [...cur, id] : cur.filter((x) => x !== id)));
+      });
     },
-    [saved, userId],
+    [saved, userId, router],
   );
 
   const value = useMemo<SavedContextValue>(
