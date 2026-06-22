@@ -29,7 +29,8 @@ export default function NewRoomPage() {
   const [pHood, setPHood] = useState("");
   const [pPrice, setPPrice] = useState("");
   const [pCap, setPCap] = useState("");
-  const [pHours, setPHours] = useState("");
+  const [pHoursFrom, setPHoursFrom] = useState("");
+  const [pHoursTo, setPHoursTo] = useState("");
   const [pDesc, setPDesc] = useState("");
   const [proof, setProof] = useState<Soundproofing>("Full isolation");
   const [genres, setGenres] = useState<Genre[]>(["PUNK", "METAL"]);
@@ -48,6 +49,7 @@ export default function NewRoomPage() {
     setBusy(true);
     setError(null);
     const priceNum = parseInt(pPrice, 10) || 0;
+    const pHours = pHoursFrom && pHoursTo ? `${pHoursFrom} – ${pHoursTo}` : "";
     try {
       // Upload photos only now, as part of submitting — so abandoning the form
       // never leaves orphaned files in uploadthing.
@@ -124,10 +126,11 @@ export default function NewRoomPage() {
                   <AuthField label={t("signup.field_neighborhood")} value={pHood} onChange={(e) => setPHood(e.target.value)} placeholder={t("signup.ph_neighborhood")} required />
                 </Grid>
                 <div style={{ marginTop: 18 }}>
-                  <Grid cols="1fr 1fr 1fr">
-                    <AuthField label={t("signup.field_rate")} value={pPrice} onChange={(e) => setPPrice(e.target.value)} placeholder="30" inputMode="numeric" required />
-                    <AuthField label={t("signup.field_capacity")} value={pCap} onChange={(e) => setPCap(e.target.value)} placeholder={t("signup.ph_capacity")} />
-                    <AuthField label={t("signup.field_hours")} value={pHours} onChange={(e) => setPHours(e.target.value)} placeholder={t("signup.ph_hours")} />
+                  <Grid cols="1fr 1fr 1fr 1fr">
+                    <AuthField label={t("signup.field_rate")} value={pPrice} onChange={(e) => setPPrice(e.target.value)} placeholder="30" type="number" min={0} step={1} inputMode="numeric" required />
+                    <AuthField label={t("signup.field_capacity")} value={pCap} onChange={(e) => setPCap(e.target.value)} placeholder={t("signup.ph_capacity")} type="number" min={0} step={1} inputMode="numeric" />
+                    <TimeField label={t("signup.hours_from")} value={pHoursFrom} onChange={setPHoursFrom} placeholder={t("signup.pick_time")} />
+                    <TimeField label={t("signup.hours_to")} value={pHoursTo} onChange={setPHoursTo} placeholder={t("signup.pick_time")} />
                   </Grid>
                 </div>
                 <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
@@ -232,4 +235,70 @@ function SectionLabel({ children, small }: { children: React.ReactNode; small?: 
 
 function Grid({ cols, children }: { cols: string; children: React.ReactNode }) {
   return <div style={{ display: "grid", gridTemplateColumns: cols, gap: 18 }}>{children}</div>;
+}
+
+const TIME_SLOTS = Array.from({ length: 48 }, (_, i) => {
+  const h = String(Math.floor(i / 2)).padStart(2, "0");
+  const m = i % 2 === 0 ? "00" : "30";
+  return `${h}:${m}`;
+});
+
+function TimeField({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <div>
+      <label style={{ fontFamily: anton, letterSpacing: 1, fontSize: 13, marginBottom: 7, display: "block" }}>{label}</label>
+      <div style={{ position: "relative" }}>
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          style={{
+            width: "100%",
+            border: "3px solid var(--ink)",
+            background: "var(--paper)",
+            fontFamily: elite,
+            fontSize: 15,
+            padding: "12px 38px 12px 14px",
+            color: value ? "var(--ink)" : "rgba(0,0,0,0.45)",
+            outline: "none",
+            cursor: "pointer",
+            appearance: "none",
+            borderRadius: 0,
+          }}
+        >
+          <option value="" disabled>
+            {placeholder}
+          </option>
+          {TIME_SLOTS.map((slot) => (
+            <option key={slot} value={slot} style={{ color: "var(--ink)" }}>
+              {slot}
+            </option>
+          ))}
+        </select>
+        <span
+          aria-hidden
+          style={{
+            position: "absolute",
+            right: 14,
+            top: "50%",
+            transform: "translateY(-50%)",
+            pointerEvents: "none",
+            color: "var(--ink)",
+            fontSize: 11,
+          }}
+        >
+          ▼
+        </span>
+      </div>
+    </div>
+  );
 }
