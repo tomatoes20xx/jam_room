@@ -23,7 +23,7 @@ export default function SavedPage() {
 
   return (
     <div style={{ position: "relative", minHeight: "100vh" }}>
-      <Masthead savedCount={saved.length} />
+      <Masthead />
       <main style={{ background: "var(--paper2)", padding: "40px 28px 70px", minHeight: "50vh" }}>
         <div style={{ maxWidth: 1180, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>

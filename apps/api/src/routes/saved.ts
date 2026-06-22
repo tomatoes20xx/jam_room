@@ -1,4 +1,5 @@
 import type { FastifyInstance } from "fastify";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../prisma.js";
 import { requireUser } from "../session.js";
 import { toRoomCard } from "../serialize.js";
@@ -21,11 +22,14 @@ export async function savedRoutes(app: FastifyInstance) {
     if (!user) return;
     const room = await prisma.room.findUnique({ where: { id: req.params.roomId } });
     if (!room) return reply.code(404).send({ error: "Room not found" });
-    await prisma.savedRoom.upsert({
-      where: { userId_roomId: { userId: user.id, roomId: room.id } },
-      create: { userId: user.id, roomId: room.id },
-      update: {},
-    });
+    try {
+      await prisma.savedRoom.create({ data: { userId: user.id, roomId: room.id } });
+    } catch (err) {
+      // Already saved (unique constraint) — idempotent success.
+      if (!(err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002")) {
+        throw err;
+      }
+    }
     return reply.code(201).send({ ok: true });
   });
 

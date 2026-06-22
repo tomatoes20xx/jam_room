@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Anton, Special_Elite, Permanent_Marker } from "next/font/google";
+import { SavedProvider } from "@/components/SavedProvider";
 import "./globals.css";
 
 const anton = Anton({ weight: "400", subsets: ["latin"], variable: "--font-anton" });
@@ -20,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${anton.variable} ${specialElite.variable} ${permanentMarker.variable}`}>
       <body>
         <div className="jr-grain" aria-hidden />
-        {children}
+        <SavedProvider>{children}</SavedProvider>
       </body>
     </html>
   );

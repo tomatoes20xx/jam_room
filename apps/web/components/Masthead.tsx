@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { SavedBadge } from "./SavedBadge";
+import { AuthNav } from "./AuthNav";
 
-export function Masthead({ savedCount = 0 }: { savedCount?: number }) {
+export function Masthead() {
   return (
     <header style={{ position: "relative", background: "var(--dark)", color: "var(--paper)", padding: "18px 28px 30px", zIndex: 5 }}>
       <div
@@ -65,40 +67,8 @@ export function Masthead({ savedCount = 0 }: { savedCount?: number }) {
             <br />
             SAQARTVELO
           </div>
-          <Link
-            href="/saved"
-            style={{
-              textDecoration: "none",
-              display: "flex",
-              alignItems: "center",
-              gap: 7,
-              background: "var(--paper)",
-              color: "var(--ink)",
-              fontFamily: "var(--font-anton), sans-serif",
-              fontSize: 14,
-              letterSpacing: 1,
-              padding: "9px 13px",
-              transform: "rotate(1deg)",
-              boxShadow: "3px 3px 0 var(--red)",
-            }}
-          >
-            <span style={{ color: "var(--red)", fontSize: 16 }}>★</span>
-            <span>{savedCount} SAVED</span>
-          </Link>
-          <Link
-            href="/login"
-            style={{
-              textDecoration: "none",
-              fontFamily: "var(--font-anton), sans-serif",
-              fontSize: 14,
-              letterSpacing: 1,
-              color: "var(--paper)",
-              border: "2px solid var(--paper)",
-              padding: "8px 13px",
-            }}
-          >
-            SIGN IN
-          </Link>
+          <SavedBadge />
+          <AuthNav />
         </div>
       </div>
       <Ticker />

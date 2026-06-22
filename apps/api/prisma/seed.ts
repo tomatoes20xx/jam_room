@@ -24,8 +24,18 @@ type SeedRoom = {
   reviews: { author: string; rating: number; text: string }[];
 };
 
-// Placeholder photo (real photos arrive via uploadthing). Deterministic by seed string.
-const pic = (seed: string) => `https://picsum.photos/seed/${seed}/640/420`;
+// Placeholder photo as an inline SVG data-URI (real photos arrive via uploadthing).
+// No external network dependency — tinted block + label, matching the design prototype.
+const TINTS = ["#3a2f4f", "#4a2f2f", "#2f4a3e", "#43391f"];
+function pic(label: string, i: number): string {
+  const tint = TINTS[i % TINTS.length];
+  const svg =
+    `<svg xmlns='http://www.w3.org/2000/svg' width='640' height='420'>` +
+    `<rect width='100%' height='100%' fill='${tint}'/>` +
+    `<text x='50%' y='50%' fill='rgba(255,255,255,.85)' font-family='monospace' font-size='30' ` +
+    `letter-spacing='3' text-anchor='middle' dominant-baseline='middle'>${label}</text></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
 
 const ROOMS: SeedRoom[] = [
   {
@@ -318,12 +328,10 @@ async function main() {
         overview: r.overview,
         longOverview: r.longOverview,
         images: {
-          create: r.images.map((seed, i) => ({
-            url: pic(seed),
-            key: `seed-${seed}`,
-            label: ["LIVE ROOM", "THE GEAR", "THE BOOTH", "THE VIBE"][i] ?? "PHOTO",
-            order: i,
-          })),
+          create: r.images.map((seed, i) => {
+            const label = ["LIVE ROOM", "THE GEAR", "THE BOOTH", "THE VIBE"][i] ?? "PHOTO";
+            return { url: pic(label, i), key: `seed-${seed}`, label, order: i };
+          }),
         },
         gearGroups: {
           create: r.gear.map((g, gi) => ({
