@@ -22,7 +22,12 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
   const ci = ((slide % slideCount) + slideCount) % slideCount;
   const current = images[ci];
   const saved = isSaved(room.id);
-  const mapHref = `https://www.google.com/maps/search/?api=1&query=${room.lat},${room.lng}`;
+  const mapQuery = [room.address, room.neighborhood, "Tbilisi"].filter(Boolean).join(", ");
+  const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+  const mapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
+  const mapEmbedSrc = mapsKey
+    ? `https://www.google.com/maps/embed/v1/place?key=${mapsKey}&q=${encodeURIComponent(mapQuery)}`
+    : null;
 
   const soundproofLabel = t(`soundproof.${room.soundproof}`);
   const factChips = [room.roomSize, soundproofLabel, room.hours, room.genres.join(" / ")].filter(Boolean);
@@ -205,13 +210,26 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
                 <span style={{ fontFamily: elite, fontSize: 11, color: "var(--yellow)" }}>{t("detail.google_maps")}</span>
               </div>
               <div style={{ position: "relative", height: 210, overflow: "hidden", background: "#c8cdbd" }}>
-                <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg, #b9bfac 0 1px, transparent 1px 38px), repeating-linear-gradient(90deg, #b9bfac 0 1px, transparent 1px 46px)" }} />
-                <div style={{ position: "absolute", left: "50%", top: "46%", transform: "translate(-50%,-100%)" }}>
-                  <div style={{ width: 30, height: 30, background: "var(--red)", border: "3px solid var(--ink)", borderRadius: "50% 50% 50% 0", transform: "rotate(-45deg)", boxShadow: "3px 3px 0 rgba(0,0,0,.35)" }} />
-                </div>
-                <div style={{ position: "absolute", bottom: 8, left: 8, fontFamily: elite, fontSize: 11, background: "var(--paper)", border: "2px solid var(--ink)", padding: "3px 7px" }}>
-                  {room.lat.toFixed(4)}, {room.lng.toFixed(4)}
-                </div>
+                {mapEmbedSrc ? (
+                  <iframe
+                    title={t("detail.location")}
+                    src={mapEmbedSrc}
+                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0, display: "block" }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    allowFullScreen
+                  />
+                ) : (
+                  <>
+                    <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg, #b9bfac 0 1px, transparent 1px 38px), repeating-linear-gradient(90deg, #b9bfac 0 1px, transparent 1px 46px)" }} />
+                    <div style={{ position: "absolute", left: "50%", top: "46%", transform: "translate(-50%,-100%)" }}>
+                      <div style={{ width: 30, height: 30, background: "var(--red)", border: "3px solid var(--ink)", borderRadius: "50% 50% 50% 0", transform: "rotate(-45deg)", boxShadow: "3px 3px 0 rgba(0,0,0,.35)" }} />
+                    </div>
+                    <div style={{ position: "absolute", bottom: 8, left: 8, fontFamily: elite, fontSize: 11, background: "var(--paper)", border: "2px solid var(--ink)", padding: "3px 7px" }}>
+                      {room.neighborhood}
+                    </div>
+                  </>
+                )}
               </div>
               <div style={{ padding: "12px 14px" }}>
                 <div style={{ fontSize: 13.5, lineHeight: 1.4 }}>{room.address}</div>
