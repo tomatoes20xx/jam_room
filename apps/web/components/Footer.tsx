@@ -9,6 +9,7 @@ export function Footer() {
       style={{
         position: "relative",
         zIndex: 2,
+        marginTop: "auto",
         background: "var(--dark)",
         color: "#b8b09a",
         padding: "30px 28px",

@@ -225,7 +225,7 @@ const ka: Dict = {
 
   // finder
   "finder.count": "{count} სარეპეტიციო ოთახი თბილისში. დაჯავშნე საათობრივად.",
-  "finder.search": "მოძებნე ოთახები, უბნები, აპარატურა...",
+  "finder.search": "მოძებნე ოთახები",
   "finder.clear": "გასუფთავება",
   "finder.all": "ყველა",
   "finder.genre": "ჟანრი",
@@ -240,7 +240,7 @@ const ka: Dict = {
   "finder.all_rooms": "ყველა ოთახი",
   "finder.listed": "{count} განთავსებული",
   "finder.empty_title": "ოთახები არ არის. სიჩუმეა.",
-  "finder.empty_body": "ვერაფერი მოიძებნა. შეასუსტე ფილტრები.",
+  "finder.empty_body": "ვერაფერი მოიძებნა.",
   "finder.reset": "ფილტრების გასუფთავება",
   "finder.load_more": "მეტის ჩვენება",
   "finder.loading": "იტვირთება…",

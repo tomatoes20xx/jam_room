@@ -34,6 +34,17 @@ body {
   color: var(--ink);
   font-family: var(--font-special-elite), "Courier New", monospace;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+/* Page shell: the single non-grain div each page renders directly under
+   body. Make it a growing flex column so the footer can be pushed to the
+   bottom on short pages instead of floating mid-screen. */
+body > div:not(.jr-grain) {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 ::selection {
