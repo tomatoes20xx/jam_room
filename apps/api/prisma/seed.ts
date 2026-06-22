@@ -359,6 +359,14 @@ async function main() {
         data: { roomId: room.id, authorId: author.id, rating: rv.rating, text: rv.text },
       });
     }
+
+    // Seed the denormalized aggregates the list endpoint sorts/filters on.
+    const reviewCount = r.reviews.length;
+    const avgRating = reviewCount
+      ? r.reviews.reduce((s, rv) => s + rv.rating, 0) / reviewCount
+      : 0;
+    await prisma.room.update({ where: { id: room.id }, data: { avgRating, reviewCount } });
+
     console.log(`  ✓ ${r.name}`);
   }
 

@@ -9,10 +9,11 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   let rooms: RoomCard[] = [];
+  let total = 0;
   let failed = false;
   let detail = "";
   try {
-    rooms = await api.listRooms();
+    ({ rooms, total } = await api.listRooms());
   } catch (e) {
     failed = true;
     detail = e instanceof Error ? e.message : "";
@@ -21,7 +22,7 @@ export default async function HomePage() {
   return (
     <div style={{ position: "relative", minHeight: "100vh" }}>
       <Masthead />
-      {failed ? <ApiOffline detail={detail} /> : <Finder initialRooms={rooms} />}
+      {failed ? <ApiOffline detail={detail} /> : <Finder initialRooms={rooms} initialTotal={total} />}
       <Footer />
     </div>
   );

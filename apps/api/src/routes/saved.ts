@@ -11,7 +11,7 @@ export async function savedRoutes(app: FastifyInstance) {
     if (!user) return;
     const saved = await prisma.savedRoom.findMany({
       where: { userId: user.id },
-      include: { room: { include: { images: true, reviews: { select: { rating: true } } } } },
+      include: { room: { include: { images: true } } },
     });
     return { rooms: saved.map((s) => toRoomCard(s.room)) };
   });

@@ -13,11 +13,6 @@ export const stringToTier: Record<PriceTier, PrismaPriceTier> = {
   $$$: "TIER_3",
 };
 
-function avgRating(reviews: { rating: number }[]): number {
-  if (reviews.length === 0) return 0;
-  return reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
-}
-
 type ImageRow = { id: string; url: string; label: string; order: number };
 
 function toImage(i: ImageRow): RoomImage {
@@ -44,11 +39,13 @@ type RoomBase = {
   hours: string;
   address: string;
   ownerId: string;
+  avgRating: number;
+  reviewCount: number;
   images: ImageRow[];
 };
 
-// Card path only needs review ratings (matches the `select: { rating: true }` query).
-type RoomCardInput = RoomBase & { reviews: { rating: number }[] };
+// Card path reads the denormalized aggregates straight off the Room row.
+type RoomCardInput = RoomBase;
 
 type RoomDetailInput = RoomBase & {
   reviews: { id: string; rating: number; text: string; createdAt: Date; author: { name: string | null; displayName: string | null } }[];
@@ -62,8 +59,8 @@ export function toRoomCard(r: RoomCardInput): RoomCard {
     name: r.name,
     neighborhood: r.neighborhood,
     vip: r.vip,
-    rating: avgRating(r.reviews),
-    reviewCount: r.reviews.length,
+    rating: r.avgRating,
+    reviewCount: r.reviewCount,
     priceTier: tierToString[r.priceTier],
     priceNum: r.priceNum,
     genres: r.genres,

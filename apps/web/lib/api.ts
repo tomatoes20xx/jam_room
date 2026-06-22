@@ -3,6 +3,7 @@ import type {
   RoomDetail,
   RoomInput,
   RoomListQuery,
+  RoomListResponse,
   Review,
   ReviewInput,
 } from "@jamroom/shared";
@@ -40,13 +41,15 @@ function toQueryString(query: Partial<RoomListQuery>): string {
   if (query.priceTier) params.set("priceTier", query.priceTier);
   if (query.openNow) params.set("openNow", "true");
   if (query.sort) params.set("sort", query.sort);
+  if (query.limit != null) params.set("limit", String(query.limit));
+  if (query.offset != null) params.set("offset", String(query.offset));
   const s = params.toString();
   return s ? `?${s}` : "";
 }
 
 export const api = {
   listRooms: (query: Partial<RoomListQuery> = {}) =>
-    req<{ rooms: RoomCard[] }>(`/rooms${toQueryString(query)}`).then((r) => r.rooms),
+    req<RoomListResponse>(`/rooms${toQueryString(query)}`),
   getRoom: (id: string) => req<{ room: RoomDetail }>(`/rooms/${id}`).then((r) => r.room),
   myRooms: () => req<{ rooms: RoomCard[] }>(`/my/rooms`).then((r) => r.rooms),
   createRoom: (input: RoomInput) =>

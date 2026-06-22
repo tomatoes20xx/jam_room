@@ -25,6 +25,17 @@ export async function reviewRoutes(app: FastifyInstance) {
       include: { author: { select: { name: true, displayName: true } } },
     });
 
+    // Refresh the denormalized aggregates the list endpoint sorts/filters on.
+    const agg = await prisma.review.aggregate({
+      where: { roomId: room.id },
+      _avg: { rating: true },
+      _count: true,
+    });
+    await prisma.room.update({
+      where: { id: room.id },
+      data: { avgRating: agg._avg.rating ?? 0, reviewCount: agg._count },
+    });
+
     return reply.code(201).send({
       review: {
         id: review.id,

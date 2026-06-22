@@ -116,6 +116,10 @@ model Room {
   overview     String
   longOverview String    @default("")
   vip          Boolean   @default(false)
+  // Denormalized review aggregates — kept in sync on review writes so the list
+  // endpoint can filter/sort/paginate at the DB level instead of in memory.
+  avgRating    Float     @default(0)
+  reviewCount  Int       @default(0)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
@@ -125,6 +129,7 @@ model Room {
   savedBy    SavedRoom[]
 
   @@index([ownerId])
+  @@index([avgRating])
 }
 
 model RoomImage {

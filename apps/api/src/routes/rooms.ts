@@ -7,7 +7,6 @@ import { stringToTier, toRoomCard, toRoomDetail } from "../serialize.js";
 
 const cardInclude = {
   images: true,
-  reviews: { select: { rating: true } },
 } satisfies Prisma.RoomInclude;
 
 const detailInclude = {
@@ -23,7 +22,7 @@ export async function roomRoutes(app: FastifyInstance) {
     if (!parsed.success) {
       return reply.code(400).send({ error: "Invalid query", details: parsed.error.flatten() });
     }
-    const { q, genre, priceTier, openNow, sort } = parsed.data;
+    const { q, genre, priceTier, openNow, sort, limit, offset } = parsed.data;
 
     const where: Prisma.RoomWhereInput = {};
     if (genre) where.genres = { has: genre };
@@ -39,16 +38,21 @@ export async function roomRoutes(app: FastifyInstance) {
       ];
     }
 
-    const rooms = await prisma.room.findMany({ where, include: cardInclude });
-    let cards = rooms.map(toRoomCard);
+    // Sort at the DB level so pagination is correct. `name` as a stable
+    // tiebreaker keeps page boundaries deterministic across requests.
+    const orderBy: Prisma.RoomOrderByWithRelationInput[] =
+      sort === "price"
+        ? [{ priceNum: "asc" }, { name: "asc" }]
+        : sort === "name"
+          ? [{ name: "asc" }]
+          : [{ avgRating: "desc" }, { name: "asc" }];
 
-    cards.sort((a, b) => {
-      if (sort === "price") return a.priceNum - b.priceNum;
-      if (sort === "name") return a.name.localeCompare(b.name);
-      return b.rating - a.rating;
-    });
+    const [total, rooms] = await Promise.all([
+      prisma.room.count({ where }),
+      prisma.room.findMany({ where, include: cardInclude, orderBy, skip: offset, take: limit }),
+    ]);
 
-    return { rooms: cards };
+    return { rooms: rooms.map(toRoomCard), total };
   });
 
   // Detail

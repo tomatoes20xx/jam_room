@@ -69,8 +69,17 @@ export const roomListQuerySchema = z.object({
   priceTier: z.enum(PRICE_TIERS).optional(),
   openNow: z.coerce.boolean().optional(),
   sort: z.enum(ROOM_SORTS).default("rating"),
+  limit: z.coerce.number().int().min(1).max(60).default(12),
+  offset: z.coerce.number().int().min(0).default(0),
 });
 export type RoomListQuery = z.infer<typeof roomListQuerySchema>;
+
+/** Response shape for GET /rooms — a page of cards plus the total match count. */
+export const roomListResponseSchema = z.object({
+  rooms: z.array(roomCardSchema),
+  total: z.number().int(),
+});
+export type RoomListResponse = z.infer<typeof roomListResponseSchema>;
 
 /** Payload for creating / updating a room (provider only). */
 export const roomInputSchema = z.object({

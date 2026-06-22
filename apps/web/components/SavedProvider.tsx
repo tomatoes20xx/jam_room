@@ -42,16 +42,27 @@ export function SavedProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!userId) return;
+    let cancelled = false;
+    // On login, push any saves made while logged out up to the account before
+    // adopting the server set, so anonymous saves aren't silently dropped.
+    const local = readLocal();
     api
       .listSaved()
-      .then((rooms) => {
-        const ids = rooms.map((r) => r.id);
-        setSaved(ids);
-        localStorage.setItem(KEY, JSON.stringify(ids));
+      .then(async (rooms) => {
+        const serverIds = rooms.map((r) => r.id);
+        const toPush = local.filter((id) => !serverIds.includes(id));
+        await Promise.all(toPush.map((id) => api.save(id).catch(() => {})));
+        if (cancelled) return;
+        const merged = Array.from(new Set([...serverIds, ...toPush]));
+        setSaved(merged);
+        localStorage.setItem(KEY, JSON.stringify(merged));
       })
       .catch(() => {
         /* stay with local */
       });
+    return () => {
+      cancelled = true;
+    };
   }, [userId]);
 
   const toggle = useCallback(

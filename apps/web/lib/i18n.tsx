@@ -44,6 +44,8 @@ const en: Dict = {
   "finder.empty_title": "NO ROOMS. ALL QUIET.",
   "finder.empty_body": "Nothing matches that search. Ease up on the filters.",
   "finder.reset": "RESET FILTERS",
+  "finder.load_more": "LOAD MORE",
+  "finder.loading": "LOADING…",
 
   // room card
   "room.open_now": "OPEN NOW",
@@ -240,6 +242,8 @@ const ka: Dict = {
   "finder.empty_title": "ოთახები არ არის. სიჩუმეა.",
   "finder.empty_body": "ვერაფერი მოიძებნა. შეასუსტე ფილტრები.",
   "finder.reset": "ფილტრების გასუფთავება",
+  "finder.load_more": "მეტის ჩვენება",
+  "finder.loading": "იტვირთება…",
 
   // room card
   "room.open_now": "ღიაა",
