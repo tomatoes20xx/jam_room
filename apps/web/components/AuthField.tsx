@@ -1,4 +1,4 @@
-const anton = "var(--font-anton), sans-serif";
+const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
 const elite = "var(--font-special-elite), monospace";
 
 export function AuthField({

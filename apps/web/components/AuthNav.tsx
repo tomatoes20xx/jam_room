@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
+import { useT } from "@/lib/i18n";
 
-const anton = "var(--font-anton), sans-serif";
+const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
 
 function initialsOf(name: string): string {
   return name
@@ -16,6 +17,7 @@ function initialsOf(name: string): string {
 
 export function AuthNav() {
   const { data: session, isPending } = useSession();
+  const { t } = useT();
 
   // Keep a stable footprint during the initial session fetch to avoid layout flash.
   if (isPending) {
@@ -36,7 +38,7 @@ export function AuthNav() {
           padding: "8px 13px",
         }}
       >
-        SIGN IN
+        {t("nav.signin")}
       </Link>
     );
   }

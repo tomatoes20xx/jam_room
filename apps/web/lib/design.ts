@@ -26,7 +26,7 @@ export function rotateFor(name: string): number {
 export function chipStyle(active: boolean): CSSProperties {
   return {
     cursor: "pointer",
-    fontFamily: "var(--font-anton), sans-serif",
+    fontFamily: "var(--font-anton), var(--font-anton-ge), sans-serif",
     letterSpacing: "1px",
     fontSize: "13px",
     padding: "6px 12px",
@@ -76,7 +76,7 @@ export function thumbStyle(tint: string, image?: string | null): CSSProperties {
 
 export function openBadgeStyle(open: boolean): CSSProperties {
   return {
-    fontFamily: "var(--font-anton), sans-serif",
+    fontFamily: "var(--font-anton), var(--font-anton-ge), sans-serif",
     fontSize: "11px",
     letterSpacing: "1px",
     padding: "3px 8px",

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { RoomCard as RoomCardType } from "@jamroom/shared";
 import { cardStyle, openBadgeStyle, saveStyle, stars, thumbStyle, tintFor } from "@/lib/design";
+import { useT } from "@/lib/i18n";
 
 type Props = {
   room: RoomCardType;
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export function RoomCard({ room, featured = false, saved, onToggleSave, vipLabel = "VIP" }: Props) {
+  const { t } = useT();
   const handleSave = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -42,7 +44,7 @@ export function RoomCard({ room, featured = false, saved, onToggleSave, vipLabel
             {vipLabel}
           </div>
         )}
-        <button onClick={handleSave} style={saveStyle(saved)} aria-label={saved ? "Unsave" : "Save"}>
+        <button onClick={handleSave} style={saveStyle(saved)} aria-label={saved ? t("room.unsave") : t("room.save")}>
           ★
         </button>
         <div style={thumbStyle(tintFor(room.id), room.primaryImage?.url)}>
@@ -58,13 +60,13 @@ export function RoomCard({ room, featured = false, saved, onToggleSave, vipLabel
           >
             {room.primaryImage?.label || room.neighborhood}
           </span>
-          <span style={openBadgeStyle(room.open)}>{room.open ? "OPEN NOW" : "CLOSED"}</span>
+          <span style={openBadgeStyle(room.open)}>{room.open ? t("room.open_now") : t("room.closed")}</span>
         </div>
         <div style={{ padding: featured ? "16px 18px 20px" : "15px 16px 18px" }}>
           <h3
             style={{
               margin: 0,
-              fontFamily: "var(--font-anton), sans-serif",
+              fontFamily: "var(--font-anton), var(--font-anton-ge), sans-serif",
               fontSize: featured ? 27 : 23,
               letterSpacing: 0.5,
               lineHeight: 1,
@@ -75,7 +77,7 @@ export function RoomCard({ room, featured = false, saved, onToggleSave, vipLabel
           </h3>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6, fontSize: 12.5 }}>
             <span style={{ color: "var(--red)", fontSize: 15, letterSpacing: 1 }}>{stars(room.rating)}</span>
-            <span style={{ fontFamily: "var(--font-anton), sans-serif" }}>{room.rating.toFixed(1)}</span>
+            <span style={{ fontFamily: "var(--font-anton), var(--font-anton-ge), sans-serif" }}>{room.rating.toFixed(1)}</span>
             <span style={{ opacity: 0.7 }}>({room.reviewCount})</span>
           </div>
           <div style={{ marginTop: 7, fontSize: 12.5, display: "flex", alignItems: "center", gap: 6 }}>
@@ -86,7 +88,7 @@ export function RoomCard({ room, featured = false, saved, onToggleSave, vipLabel
               <span
                 key={g}
                 style={{
-                  fontFamily: "var(--font-anton), sans-serif",
+                  fontFamily: "var(--font-anton), var(--font-anton-ge), sans-serif",
                   fontSize: 10.5,
                   letterSpacing: 1,
                   padding: "3px 7px",
@@ -108,20 +110,20 @@ export function RoomCard({ room, featured = false, saved, onToggleSave, vipLabel
               paddingTop: 12,
             }}
           >
-            <span style={{ fontFamily: "var(--font-anton), sans-serif", fontSize: 16 }}>
+            <span style={{ fontFamily: "var(--font-anton), var(--font-anton-ge), sans-serif", fontSize: 16 }}>
               ₾{room.priceNum}
-              <span style={{ fontSize: 11, fontFamily: "var(--font-special-elite), monospace" }}> /hr</span>
+              <span style={{ fontSize: 11, fontFamily: "var(--font-special-elite), monospace" }}> {t("room.per_hour")}</span>
             </span>
             <span
               style={{
-                fontFamily: "var(--font-anton), sans-serif",
+                fontFamily: "var(--font-anton), var(--font-anton-ge), sans-serif",
                 fontSize: 13,
                 letterSpacing: 1,
                 color: "var(--ink)",
                 borderBottom: "3px solid var(--red)",
               }}
             >
-              ENTER →
+              {t("room.enter")}
             </span>
           </div>
         </div>

@@ -13,13 +13,15 @@ import { Footer } from "@/components/Footer";
 import { GoogleButton } from "@/components/GoogleButton";
 import { AuthField } from "@/components/AuthField";
 import { PhotoUploader, type UploadedPhoto } from "@/components/PhotoUploader";
+import { useT, type TFunc } from "@/lib/i18n";
 
-const anton = "var(--font-anton), sans-serif";
+const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
 const elite = "var(--font-special-elite), monospace";
 
 type Tab = "user" | "provider";
 
 export default function SignupPage() {
+  const { t } = useT();
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("user");
   const [done, setDone] = useState(false);
@@ -70,7 +72,7 @@ export default function SignupPage() {
       displayName: uName,
     });
     setBusy(false);
-    if (err) return setError(err.message ?? "Sign up failed");
+    if (err) return setError(err.message ?? t("signup.err_failed"));
     setDone(true);
   };
 
@@ -89,7 +91,7 @@ export default function SignupPage() {
     });
     if (err) {
       setBusy(false);
-      return setError(err.message ?? "Sign up failed");
+      return setError(err.message ?? t("signup.err_failed"));
     }
     // Create the room listing.
     const input: RoomInput = {
@@ -117,7 +119,7 @@ export default function SignupPage() {
       await api.createRoom(input);
     } catch (e2) {
       // Account exists even if room creation failed; surface the issue.
-      setError(e2 instanceof Error ? `Account created, but room save failed: ${e2.message}` : "Room save failed");
+      setError(e2 instanceof Error ? t("signup.err_room_partial", { msg: e2.message }) : t("signup.err_room"));
       setBusy(false);
       return;
     }
@@ -131,21 +133,19 @@ export default function SignupPage() {
         <section style={{ background: "var(--paper)", borderBottom: "4px solid var(--ink)", padding: "80px 28px" }}>
           <div style={{ maxWidth: 640, margin: "0 auto", textAlign: "center" }}>
             <div style={{ display: "inline-block", fontFamily: "var(--font-permanent-marker), cursive", fontSize: 22, background: "var(--yellow)", color: "var(--ink)", padding: "6px 18px", transform: "rotate(-3deg)", border: "2px solid var(--ink)", boxShadow: "4px 4px 0 var(--ink)" }}>
-              you&apos;re in
+              {t("signup.done_badge")}
             </div>
             <h1 style={{ margin: "26px 0 0", fontFamily: anton, fontSize: "clamp(44px,8vw,84px)", lineHeight: 0.9, letterSpacing: 1, textTransform: "uppercase" }}>
-              {tab === "user" ? "LET’S GET LOUD." : "ROOM IS LIVE."}
+              {tab === "user" ? t("signup.done_user_title") : t("signup.done_provider_title")}
             </h1>
             <p style={{ fontFamily: elite, fontSize: 16, lineHeight: 1.6, margin: "18px 0 30px" }}>
-              {tab === "user"
-                ? "Your account is set. Start digging through Tbilisi’s rehearsal rooms and book your first slot."
-                : "Your listing is live. Bands can find you, message you, and book by the hour."}
+              {tab === "user" ? t("signup.done_user_body") : t("signup.done_provider_body")}
             </p>
             <button
               onClick={() => router.push("/")}
               style={{ cursor: "pointer", fontFamily: anton, letterSpacing: 1, fontSize: 17, padding: "13px 24px", background: "var(--red)", color: "var(--paper)", border: 0, boxShadow: "5px 5px 0 var(--ink)" }}
             >
-              → BROWSE ROOMS
+              {t("signup.done_browse")}
             </button>
           </div>
         </section>
@@ -159,21 +159,21 @@ export default function SignupPage() {
         <div style={{ maxWidth: 980, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 20, flexWrap: "wrap" }}>
             <h1 style={{ margin: 0, fontFamily: anton, fontSize: "clamp(40px,6.5vw,80px)", lineHeight: 0.9, letterSpacing: 1, textTransform: "uppercase", maxWidth: 680 }}>
-              Join the
+              {t("signup.join_pre")}
               <br />
               <span style={{ color: "var(--paper)", background: "var(--red)", padding: "2px 12px", display: "inline-block", transform: "rotate(-1.5deg)", boxShadow: "4px 4px 0 #000", marginTop: 8 }}>
-                racket.
+                {t("signup.join_accent")}
               </span>
             </h1>
             <div style={{ fontFamily: elite, fontSize: 14, maxWidth: 250, lineHeight: 1.5, border: "2px solid var(--ink)", padding: "10px 12px", transform: "rotate(1deg)", background: "var(--yellow)" }}>
-              Pick your side of the glass. Takes two minutes. Costs nothing.
+              {t("signup.hero_note")}
             </div>
           </div>
 
           {/* tabs */}
           <div style={{ marginTop: 36, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-            <TabButton active={tab === "user"} onClick={() => setTab("user")} title="I'M A MUSICIAN" sub="Find rooms · book slots · save favorites" />
-            <TabButton active={tab === "provider"} onClick={() => setTab("provider")} title="I RUN A ROOM" sub="List your space · set rates · take bookings" />
+            <TabButton active={tab === "user"} onClick={() => setTab("user")} title={t("signup.tab_user_title")} sub={t("signup.tab_user_sub")} />
+            <TabButton active={tab === "provider"} onClick={() => setTab("provider")} title={t("signup.tab_provider_title")} sub={t("signup.tab_provider_sub")} />
           </div>
         </div>
       </section>
@@ -188,58 +188,58 @@ export default function SignupPage() {
 
           {tab === "user" ? (
             <form onSubmit={submitUser} style={{ maxWidth: 520, margin: "0 auto", background: "var(--paper)", border: "3px solid var(--ink)", boxShadow: "8px 8px 0 var(--ink)", padding: "28px 28px 32px" }}>
-              <SectionLabel>QUICK START</SectionLabel>
-              <GoogleButton label="SIGN UP WITH GOOGLE" />
-              <Divider label="OR GO OLD-SCHOOL" />
+              <SectionLabel>{t("signup.quick_start")}</SectionLabel>
+              <GoogleButton label={t("signup.google_signup")} />
+              <Divider label={t("signup.or_oldschool")} />
               <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-                <AuthField label="EMAIL" type="email" value={uEmail} onChange={(e) => setUEmail(e.target.value)} placeholder="you@band.ge" required />
-                <AuthField label="USERNAME" value={uName} onChange={(e) => setUName(e.target.value)} placeholder="stagename_94" required />
-                <AuthField label="PASSWORD" type="password" value={uPass} onChange={(e) => setUPass(e.target.value)} placeholder="••••••••" required />
+                <AuthField label={t("signup.field_email")} type="email" value={uEmail} onChange={(e) => setUEmail(e.target.value)} placeholder="you@band.ge" required />
+                <AuthField label={t("signup.username")} value={uName} onChange={(e) => setUName(e.target.value)} placeholder="stagename_94" required />
+                <AuthField label={t("signup.field_password")} type="password" value={uPass} onChange={(e) => setUPass(e.target.value)} placeholder="••••••••" required />
               </div>
-              <SubmitButton busy={busy}>CREATE ACCOUNT →</SubmitButton>
-              <SignInHint />
+              <SubmitButton busy={busy}>{t("signup.create_account")}</SubmitButton>
+              <SignInHint t={t} />
             </form>
           ) : (
             <form onSubmit={submitProvider} style={{ background: "var(--paper)", border: "3px solid var(--ink)", boxShadow: "8px 8px 0 var(--ink)", padding: "28px 30px 34px" }}>
               <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                 <div style={{ fontFamily: elite, fontSize: 13 }}>
-                  List your space. <span style={{ opacity: 0.7 }}>All fields help bands find you.</span>
+                  {t("signup.provider_intro")} <span style={{ opacity: 0.7 }}>{t("signup.provider_intro_sub")}</span>
                 </div>
-                <GoogleButton compact label="CONTINUE WITH GOOGLE" />
+                <GoogleButton compact label={t("signup.provider_google")} />
               </div>
 
-              <SectionLabel small>01 · THE BASICS</SectionLabel>
+              <SectionLabel small>{t("signup.sec_basics")}</SectionLabel>
               <Grid cols="1fr 1fr">
-                <AuthField label="ROOM / VENUE NAME" value={pRoom} onChange={(e) => setPRoom(e.target.value)} placeholder="The Cellar" required />
-                <AuthField label="YOUR NAME" value={pName} onChange={(e) => setPName(e.target.value)} placeholder="Dato K." required />
-                <AuthField label="EMAIL" type="email" value={pEmail} onChange={(e) => setPEmail(e.target.value)} placeholder="booking@cellar.ge" required />
-                <AuthField label="PASSWORD" type="password" value={pPass} onChange={(e) => setPPass(e.target.value)} placeholder="••••••••" required />
+                <AuthField label={t("signup.field_room_name")} value={pRoom} onChange={(e) => setPRoom(e.target.value)} placeholder="The Cellar" required />
+                <AuthField label={t("signup.field_your_name")} value={pName} onChange={(e) => setPName(e.target.value)} placeholder="Dato K." required />
+                <AuthField label={t("signup.field_email")} type="email" value={pEmail} onChange={(e) => setPEmail(e.target.value)} placeholder="booking@cellar.ge" required />
+                <AuthField label={t("signup.field_password")} type="password" value={pPass} onChange={(e) => setPPass(e.target.value)} placeholder="••••••••" required />
               </Grid>
 
-              <SectionLabel small>02 · THE SPACE</SectionLabel>
+              <SectionLabel small>{t("signup.sec_space")}</SectionLabel>
               <Grid cols="2fr 1fr">
-                <AuthField label="STREET ADDRESS" value={pAddr} onChange={(e) => setPAddr(e.target.value)} placeholder="12 Asatiani St, Tbilisi" required />
-                <AuthField label="NEIGHBORHOOD" value={pHood} onChange={(e) => setPHood(e.target.value)} placeholder="Sololaki" required />
+                <AuthField label={t("signup.field_address")} value={pAddr} onChange={(e) => setPAddr(e.target.value)} placeholder={t("signup.ph_address")} required />
+                <AuthField label={t("signup.field_neighborhood")} value={pHood} onChange={(e) => setPHood(e.target.value)} placeholder={t("signup.ph_neighborhood")} required />
               </Grid>
               <div style={{ marginTop: 18 }}>
                 <Grid cols="1fr 1fr 1fr">
-                  <AuthField label="RATE (₾/HR)" value={pPrice} onChange={(e) => setPPrice(e.target.value)} placeholder="30" inputMode="numeric" required />
-                  <AuthField label="CAPACITY" value={pCap} onChange={(e) => setPCap(e.target.value)} placeholder="12 people" />
-                  <AuthField label="HOURS" value={pHours} onChange={(e) => setPHours(e.target.value)} placeholder="10am – 2am daily" />
+                  <AuthField label={t("signup.field_rate")} value={pPrice} onChange={(e) => setPPrice(e.target.value)} placeholder="30" inputMode="numeric" required />
+                  <AuthField label={t("signup.field_capacity")} value={pCap} onChange={(e) => setPCap(e.target.value)} placeholder={t("signup.ph_capacity")} />
+                  <AuthField label={t("signup.field_hours")} value={pHours} onChange={(e) => setPHours(e.target.value)} placeholder={t("signup.ph_hours")} />
                 </Grid>
               </div>
               <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                <span style={{ fontFamily: elite, fontSize: 12, opacity: 0.7 }}>SOUNDPROOFING:</span>
+                <span style={{ fontFamily: elite, fontSize: 12, opacity: 0.7 }}>{t("signup.soundproofing")}</span>
                 {SOUNDPROOFING.map((s) => (
                   <button key={s} type="button" style={chipStyle(proof === s)} onClick={() => setProof(s)}>
-                    {s}
+                    {t(`soundproof.${s}`)}
                   </button>
                 ))}
               </div>
 
-              <SectionLabel small>03 · THE GEAR</SectionLabel>
+              <SectionLabel small>{t("signup.sec_gear")}</SectionLabel>
               <label style={{ fontFamily: anton, letterSpacing: 1, fontSize: 13, marginBottom: 9, display: "block" }}>
-                EQUIPMENT LIST <span style={{ fontFamily: elite, fontSize: 11, opacity: 0.6, letterSpacing: 0 }}>— what bands can plug into</span>
+                {t("signup.equipment")} <span style={{ fontFamily: elite, fontSize: 11, opacity: 0.6, letterSpacing: 0 }}>{t("signup.equipment_hint")}</span>
               </label>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {equip.map((v, i) => (
@@ -248,7 +248,7 @@ export default function SignupPage() {
                     <input
                       value={v}
                       onChange={(e) => setEquip((prev) => prev.map((x, j) => (j === i ? e.target.value : x)))}
-                      placeholder="e.g. Marshall JCM800 head"
+                      placeholder={t("signup.gear_placeholder")}
                       style={{ flex: 1, border: "3px solid var(--ink)", background: "var(--paper)", fontFamily: elite, fontSize: 14, padding: "10px 13px", color: "var(--ink)", outline: "none" }}
                     />
                     <button
@@ -266,10 +266,10 @@ export default function SignupPage() {
                 onClick={() => setEquip((prev) => [...prev, ""])}
                 style={{ marginTop: 12, cursor: "pointer", fontFamily: anton, letterSpacing: 1, fontSize: 13, padding: "9px 15px", background: "var(--ink)", color: "var(--paper)", border: 0, boxShadow: "3px 3px 0 var(--red)" }}
               >
-                + ADD GEAR
+                {t("signup.add_gear")}
               </button>
 
-              <label style={{ fontFamily: anton, letterSpacing: 1, fontSize: 13, margin: "24px 0 9px", display: "block" }}>GENRES YOU CATER TO</label>
+              <label style={{ fontFamily: anton, letterSpacing: 1, fontSize: 13, margin: "24px 0 9px", display: "block" }}>{t("signup.genres")}</label>
               <div style={{ display: "flex", gap: 9, flexWrap: "wrap" }}>
                 {GENRES.map((g) => (
                   <button key={g} type="button" style={chipStyle(genres.includes(g))} onClick={() => toggleGenre(g)}>
@@ -278,19 +278,19 @@ export default function SignupPage() {
                 ))}
               </div>
 
-              <SectionLabel small>04 · THE PHOTOS</SectionLabel>
+              <SectionLabel small>{t("signup.sec_photos")}</SectionLabel>
               <PhotoUploader photos={photos} onChange={setPhotos} />
 
-              <SectionLabel small>05 · THE PITCH</SectionLabel>
+              <SectionLabel small>{t("signup.sec_pitch")}</SectionLabel>
               <textarea
                 value={pDesc}
                 onChange={(e) => setPDesc(e.target.value)}
-                placeholder="Tell bands what makes the room loud, weird and worth booking. Vibe, walls, backline — all of it."
+                placeholder={t("signup.pitch_placeholder")}
                 style={{ width: "100%", minHeight: 120, resize: "vertical", border: "3px solid var(--ink)", background: "var(--paper)", fontFamily: elite, fontSize: 14, lineHeight: 1.5, padding: 14, color: "var(--ink)", outline: "none" }}
               />
 
-              <SubmitButton busy={busy} big>LIST MY ROOM →</SubmitButton>
-              <SignInHint listed />
+              <SubmitButton busy={busy} big>{t("signup.list_room")}</SubmitButton>
+              <SignInHint t={t} listed />
             </form>
           )}
         </div>
@@ -367,12 +367,12 @@ function SubmitButton({ children, busy, big }: { children: React.ReactNode; busy
   );
 }
 
-function SignInHint({ listed }: { listed?: boolean }) {
+function SignInHint({ t, listed }: { t: TFunc; listed?: boolean }) {
   return (
     <div style={{ textAlign: "center", marginTop: 18, fontFamily: elite, fontSize: 13 }}>
-      {listed ? "Already listed? " : "Already in the scene? "}
+      {listed ? t("signup.signin_listed") : t("signup.signin_scene")}{" "}
       <Link href="/login" style={{ color: "var(--ink)", borderBottom: "3px solid var(--red)", fontFamily: anton, letterSpacing: 1, textDecoration: "none" }}>
-        SIGN IN
+        {t("nav.signin")}
       </Link>
     </div>
   );

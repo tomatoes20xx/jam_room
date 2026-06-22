@@ -5,13 +5,15 @@ import { useState } from "react";
 import type { RoomDetail } from "@jamroom/shared";
 import { openBadgeStyle, rotateFor, stars, tintFor } from "@/lib/design";
 import { useSaved } from "@/lib/useSaved";
+import { useT } from "@/lib/i18n";
 import { ReviewForm } from "./ReviewForm";
 
 const TINTS = ["#3a2f4f", "#4a2f2f", "#2f4a3e", "#43391f", "#2f3a4a", "#4a3f2f"];
-const anton = "var(--font-anton), sans-serif";
+const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
 const elite = "var(--font-special-elite), monospace";
 
 export function RoomDetailView({ room }: { room: RoomDetail }) {
+  const { t } = useT();
   const { isSaved, toggle } = useSaved();
   const [slide, setSlide] = useState(0);
 
@@ -22,13 +24,14 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
   const saved = isSaved(room.id);
   const mapHref = `https://www.google.com/maps/search/?api=1&query=${room.lat},${room.lng}`;
 
-  const factChips = [room.roomSize, room.soundproof, room.hours, room.genres.join(" / ")].filter(Boolean);
+  const soundproofLabel = t(`soundproof.${room.soundproof}`);
+  const factChips = [room.roomSize, soundproofLabel, room.hours, room.genres.join(" / ")].filter(Boolean);
   const specRows: [string, string][] = [
-    ["PRICE", `₾${room.priceNum} / hr (${room.priceTier})`],
-    ["ROOM SIZE", room.roomSize],
-    ["SOUNDPROOFING", room.soundproof],
-    ["HOURS", room.hours],
-    ["CAPACITY", room.capacity ?? "—"],
+    [t("detail.spec_price"), t("detail.price_value", { price: room.priceNum, tier: room.priceTier })],
+    [t("detail.spec_room_size"), room.roomSize],
+    [t("detail.spec_soundproofing"), soundproofLabel],
+    [t("detail.spec_hours"), room.hours],
+    [t("detail.spec_capacity"), room.capacity ?? "—"],
   ];
 
   return (
@@ -40,7 +43,7 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
             href="/"
             style={{ textDecoration: "none", fontFamily: anton, letterSpacing: 1, fontSize: 14, background: "var(--paper)", color: "var(--ink)", padding: "8px 14px", boxShadow: "3px 3px 0 var(--red)" }}
           >
-            ← BACK TO ROOMS
+            {t("detail.back")}
           </Link>
           <div style={{ marginTop: 20, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 20, flexWrap: "wrap" }}>
             <div>
@@ -58,7 +61,7 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
                     marginBottom: 8,
                   }}
                 >
-                  VIP · FEATURED
+                  {t("detail.vip_featured")}
                 </div>
               )}
               <h1 style={{ margin: 0, fontFamily: anton, fontSize: "clamp(38px,6vw,72px)", lineHeight: 0.88, letterSpacing: 1, textTransform: "uppercase" }}>
@@ -67,12 +70,12 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
               <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12, flexWrap: "wrap", fontSize: 14 }}>
                 <span style={{ color: "var(--red)", fontSize: 20, letterSpacing: 2 }}>{stars(room.rating)}</span>
                 <span style={{ fontFamily: anton, fontSize: 18 }}>{room.rating.toFixed(1)}</span>
-                <span style={{ opacity: 0.75 }}>{room.reviewCount} reviews</span>
+                <span style={{ opacity: 0.75 }}>{t("detail.reviews_count", { count: room.reviewCount })}</span>
                 <span style={{ opacity: 0.4 }}>|</span>
                 <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <span style={{ color: "var(--red)" }}>⚲</span> {room.neighborhood}
                 </span>
-                <span style={openBadgeStyle(room.open)}>{room.open ? "OPEN NOW" : "CLOSED"}</span>
+                <span style={openBadgeStyle(room.open)}>{room.open ? t("room.open_now") : t("room.closed")}</span>
               </div>
             </div>
             <button
@@ -87,7 +90,7 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
                 ...(saved ? { background: "var(--red)", color: "var(--paper)" } : { background: "var(--paper)", color: "var(--ink)" }),
               }}
             >
-              ★ {saved ? "SAVED" : "SAVE"}
+              ★ {saved ? t("detail.saved") : t("detail.save")}
             </button>
           </div>
         </div>
@@ -117,7 +120,7 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
                     {room.name}
                   </div>
                   <div style={{ fontFamily: elite, fontSize: 12, letterSpacing: 3, marginTop: 6, opacity: 0.7 }}>
-                    [ NO PHOTO YET ]
+                    {t("detail.no_photo")}
                   </div>
                 </div>
               )}
@@ -148,7 +151,7 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
                   ...(i === ci ? { background: "var(--ink)", color: "var(--paper)" } : { background: "var(--paper)", color: "var(--ink)" }),
                 }}
               >
-                {img.label || `PHOTO ${i + 1}`}
+                {img.label || t("detail.photo", { n: i + 1 })}
               </button>
             ))}
           </div>
@@ -161,7 +164,7 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
           {/* LEFT */}
           <div>
             <div style={{ background: "var(--paper)", border: "3px solid var(--ink)", padding: "20px 22px", boxShadow: "6px 6px 0 var(--ink)" }}>
-              <h2 style={{ margin: "0 0 10px", fontFamily: anton, fontSize: 26, letterSpacing: 1 }}>THE ROOM</h2>
+              <h2 style={{ margin: "0 0 10px", fontFamily: anton, fontSize: 26, letterSpacing: 1 }}>{t("detail.the_room")}</h2>
               <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6 }}>{room.longOverview || room.overview}</p>
               <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {factChips.map((f) => (
@@ -173,7 +176,7 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
             </div>
 
             <h2 style={{ margin: "30px 0 14px", fontFamily: anton, fontSize: 26, letterSpacing: 1, display: "flex", alignItems: "center", gap: 12 }}>
-              THE GEAR <span style={{ flex: 1, height: 3, background: "repeating-linear-gradient(90deg, var(--ink) 0 10px, transparent 10px 18px)" }} />
+              {t("detail.the_gear")} <span style={{ flex: 1, height: 3, background: "repeating-linear-gradient(90deg, var(--ink) 0 10px, transparent 10px 18px)" }} />
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               {room.gear.map((grp) => (
@@ -198,8 +201,8 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
             <div style={{ background: "var(--paper)", border: "3px solid var(--ink)", boxShadow: "6px 6px 0 var(--ink)" }}>
               <div style={{ fontFamily: anton, fontSize: 16, letterSpacing: 1, padding: "10px 14px", background: "var(--ink)", color: "var(--paper)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <span>LOCATION</span>
-                <span style={{ fontFamily: elite, fontSize: 11, color: "var(--yellow)" }}>GOOGLE MAPS</span>
+                <span>{t("detail.location")}</span>
+                <span style={{ fontFamily: elite, fontSize: 11, color: "var(--yellow)" }}>{t("detail.google_maps")}</span>
               </div>
               <div style={{ position: "relative", height: 210, overflow: "hidden", background: "#c8cdbd" }}>
                 <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg, #b9bfac 0 1px, transparent 1px 38px), repeating-linear-gradient(90deg, #b9bfac 0 1px, transparent 1px 46px)" }} />
@@ -218,13 +221,13 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
                   rel="noopener"
                   style={{ marginTop: 10, display: "inline-block", fontFamily: anton, letterSpacing: 1, fontSize: 14, textDecoration: "none", color: "var(--paper)", background: "var(--red)", padding: "9px 14px", boxShadow: "3px 3px 0 var(--ink)" }}
                 >
-                  OPEN IN MAPS ↗
+                  {t("detail.open_maps")}
                 </a>
               </div>
             </div>
 
             <div style={{ background: "var(--ink)", color: "var(--paper)", border: "3px solid var(--ink)", padding: "16px 18px" }}>
-              <div style={{ fontFamily: anton, fontSize: 16, letterSpacing: 1, color: "var(--yellow)", marginBottom: 12 }}>THE DETAILS</div>
+              <div style={{ fontFamily: anton, fontSize: 16, letterSpacing: 1, color: "var(--yellow)", marginBottom: 12 }}>{t("detail.the_details")}</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {specRows.map(([k, v]) => (
                   <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 13.5, borderBottom: "1px dashed rgba(239,233,216,.3)", paddingBottom: 9 }}>
@@ -242,8 +245,8 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
       <section style={{ padding: "36px 28px 0" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <h2 style={{ margin: "0 0 18px", fontFamily: anton, fontSize: 30, letterSpacing: 1, display: "flex", alignItems: "center", gap: 14 }}>
-            FROM THE PIT{" "}
-            <span style={{ fontFamily: "var(--font-permanent-marker), cursive", fontSize: 18, color: "var(--red)", transform: "rotate(-3deg)" }}>reviews</span>
+            {t("detail.from_the_pit")}{" "}
+            <span style={{ fontFamily: "var(--font-permanent-marker), cursive", fontSize: 18, color: "var(--red)", transform: "rotate(-3deg)" }}>{t("detail.reviews")}</span>
             <span style={{ flex: 1, height: 3, background: "repeating-linear-gradient(90deg, var(--ink) 0 10px, transparent 10px 18px)" }} />
           </h2>
           <ReviewForm roomId={room.id} />

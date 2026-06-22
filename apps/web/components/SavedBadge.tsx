@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useSaved } from "@/lib/useSaved";
+import { useT } from "@/lib/i18n";
 
 export function SavedBadge() {
   const { saved } = useSaved();
+  const { t } = useT();
   return (
     <Link
       href="/saved"
@@ -15,7 +17,7 @@ export function SavedBadge() {
         gap: 7,
         background: "var(--paper)",
         color: "var(--ink)",
-        fontFamily: "var(--font-anton), sans-serif",
+        fontFamily: "var(--font-anton), var(--font-anton-ge), sans-serif",
         fontSize: 14,
         letterSpacing: 1,
         padding: "9px 13px",
@@ -24,7 +26,7 @@ export function SavedBadge() {
       }}
     >
       <span style={{ color: "var(--red)", fontSize: 16 }}>★</span>
-      <span>{saved.length} SAVED</span>
+      <span>{t("saved.badge", { count: saved.length })}</span>
     </Link>
   );
 }

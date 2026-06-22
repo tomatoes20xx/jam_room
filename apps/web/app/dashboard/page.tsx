@@ -8,11 +8,13 @@ import { signOut, useSession } from "@/lib/auth-client";
 import { stars } from "@/lib/design";
 import { Masthead } from "@/components/Masthead";
 import { Footer } from "@/components/Footer";
+import { useT } from "@/lib/i18n";
 
-const anton = "var(--font-anton), sans-serif";
+const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
 const elite = "var(--font-special-elite), monospace";
 
 export default function DashboardPage() {
+  const { t } = useT();
   const { data: session, isPending } = useSession();
   const [rooms, setRooms] = useState<RoomCardType[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -22,11 +24,11 @@ export default function DashboardPage() {
     api
       .myRooms()
       .then(setRooms)
-      .catch((e) => setError(e instanceof Error ? e.message : "Could not load your rooms"));
-  }, [session]);
+      .catch((e) => setError(e instanceof Error ? e.message : t("dash.load_error")));
+  }, [session, t]);
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this room listing?")) return;
+    if (!confirm(t("dash.confirm_delete"))) return;
     await api.deleteRoom(id).catch(() => {});
     setRooms((prev) => prev.filter((r) => r.id !== id));
   };
@@ -38,22 +40,22 @@ export default function DashboardPage() {
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
             <h1 style={{ margin: 0, fontFamily: anton, fontSize: 40, letterSpacing: 1, textTransform: "uppercase" }}>
-              Your <span style={{ color: "var(--red)" }}>rooms.</span>
+              {t("dash.title_pre")} <span style={{ color: "var(--red)" }}>{t("dash.title_accent")}</span>
             </h1>
             <div style={{ flex: 1, height: 3, background: "repeating-linear-gradient(90deg, var(--ink) 0 12px, transparent 12px 22px)" }} />
             {session && (
               <button onClick={() => signOut()} style={{ cursor: "pointer", fontFamily: anton, letterSpacing: 1, fontSize: 13, padding: "8px 14px", background: "var(--ink)", color: "var(--paper)", border: 0 }}>
-                SIGN OUT
+                {t("nav.signout")}
               </button>
             )}
           </div>
 
           {isPending ? null : !session ? (
-            <Prompt text="Sign in as a room owner to manage your listings." cta="SIGN IN" href="/login" />
+            <Prompt text={t("dash.prompt_signin")} cta={t("nav.signin")} href="/login" />
           ) : error ? (
-            <Prompt text={error} cta="LIST A ROOM" href="/signup" />
+            <Prompt text={error} cta={t("dash.list_room")} href="/signup" />
           ) : rooms.length === 0 ? (
-            <Prompt text="No rooms yet. List your first space." cta="LIST A ROOM" href="/signup" />
+            <Prompt text={t("dash.prompt_empty")} cta={t("dash.list_room")} href="/signup" />
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {rooms.map((room) => (
@@ -61,14 +63,14 @@ export default function DashboardPage() {
                   <div style={{ flex: 1, minWidth: 200 }}>
                     <div style={{ fontFamily: anton, fontSize: 22, letterSpacing: 0.5, textTransform: "uppercase" }}>{room.name}</div>
                     <div style={{ fontFamily: elite, fontSize: 13, marginTop: 4 }}>
-                      {room.neighborhood} · ₾{room.priceNum}/hr · <span style={{ color: "var(--red)" }}>{stars(room.rating)}</span> ({room.reviewCount})
+                      {room.neighborhood} · ₾{room.priceNum}{t("room.per_hour")} · <span style={{ color: "var(--red)" }}>{stars(room.rating)}</span> ({room.reviewCount})
                     </div>
                   </div>
                   <Link href={`/rooms/${room.id}`} style={{ textDecoration: "none", fontFamily: anton, letterSpacing: 1, fontSize: 13, padding: "8px 14px", background: "var(--paper)", color: "var(--ink)", border: "2px solid var(--ink)" }}>
-                    VIEW
+                    {t("dash.view")}
                   </Link>
                   <button onClick={() => remove(room.id)} style={{ cursor: "pointer", fontFamily: anton, letterSpacing: 1, fontSize: 13, padding: "8px 14px", background: "var(--red)", color: "var(--paper)", border: 0 }}>
-                    DELETE
+                    {t("dash.delete")}
                   </button>
                 </div>
               ))}

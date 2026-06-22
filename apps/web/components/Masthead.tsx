@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { SavedBadge } from "./SavedBadge";
 import { AuthNav } from "./AuthNav";
+import { LangToggle, useT } from "@/lib/i18n";
 
 export function Masthead() {
+  const { t } = useT();
   return (
     <header style={{ position: "relative", background: "var(--dark)", color: "var(--paper)", padding: "18px 28px 30px", zIndex: 5 }}>
       <div
@@ -21,7 +25,7 @@ export function Masthead() {
             style={{
               background: "var(--red)",
               color: "var(--paper)",
-              fontFamily: "var(--font-anton), sans-serif",
+              fontFamily: "var(--font-anton), var(--font-anton-ge), sans-serif",
               fontSize: 30,
               lineHeight: 0.82,
               letterSpacing: 1,
@@ -35,8 +39,8 @@ export function Masthead() {
             ROOM
           </div>
           <div>
-            <div style={{ fontFamily: "var(--font-anton), sans-serif", fontSize: 34, letterSpacing: 2, lineHeight: 1 }}>
-              FINDER<span style={{ color: "var(--red)" }}>.</span>
+            <div style={{ fontFamily: "var(--font-anton), var(--font-anton-ge), sans-serif", fontSize: 34, letterSpacing: 2, lineHeight: 1 }}>
+              {t("brand.finder")}<span style={{ color: "var(--red)" }}>.</span>
             </div>
             <div
               style={{
@@ -63,48 +67,15 @@ export function Masthead() {
               paddingLeft: 12,
             }}
           >
-            TBILISI
+            {t("masthead.city")}
             <br />
-            SAQARTVELO
+            {t("masthead.country")}
           </div>
+          <LangToggle />
           <SavedBadge />
           <AuthNav />
         </div>
       </div>
-      <Ticker />
     </header>
-  );
-}
-
-const TICKER =
-  "★ NO BAD VIBES ★ BYO STICKS ★ AMPS ON 11 ★ SOUNDPROOFED ★ HOURLY RATES ★ DRUMMERS WELCOME ★ LATE NIGHT SLOTS ";
-
-export function Ticker() {
-  return (
-    <div
-      style={{
-        marginTop: 18,
-        overflow: "hidden",
-        borderTop: "2px solid var(--red)",
-        borderBottom: "2px solid var(--red)",
-        padding: "5px 0",
-        background: "#0f0d09",
-      }}
-    >
-      <div className="jr-marquee-track">
-        <span
-          style={{
-            fontFamily: "var(--font-anton), sans-serif",
-            letterSpacing: 3,
-            fontSize: 13,
-            color: "var(--yellow)",
-            paddingLeft: 10,
-          }}
-        >
-          {TICKER}
-          {TICKER}
-        </span>
-      </div>
-    </div>
   );
 }

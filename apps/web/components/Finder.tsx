@@ -4,17 +4,19 @@ import { useMemo, useState } from "react";
 import type { PriceTier, RoomCard as RoomCardType, RoomSort } from "@jamroom/shared";
 import { chipStyle } from "@/lib/design";
 import { useSaved } from "@/lib/useSaved";
+import { useT } from "@/lib/i18n";
 import { RoomCard } from "./RoomCard";
 
 const GENRES = ["ALL", "PUNK", "METAL", "HARDCORE", "INDIE", "ROCK", "GARAGE", "HIP-HOP", "NOISE", "JAZZ"];
 const PRICES: (PriceTier | "ALL")[] = ["ALL", "$", "$$", "$$$"];
 const SORTS: [RoomSort, string][] = [
-  ["rating", "TOP RATED"],
-  ["price", "CHEAPEST"],
-  ["name", "A–Z"],
+  ["rating", "finder.sort_rating"],
+  ["price", "finder.sort_price"],
+  ["name", "finder.sort_name"],
 ];
 
 export function Finder({ initialRooms }: { initialRooms: RoomCardType[] }) {
+  const { t } = useT();
   const [query, setQuery] = useState("");
   const [genre, setGenre] = useState<string | null>(null);
   const [price, setPrice] = useState<PriceTier | null>(null);
@@ -52,7 +54,7 @@ export function Finder({ initialRooms }: { initialRooms: RoomCardType[] }) {
     setOpenNow(false);
   };
 
-  const sectionHeading = "var(--font-anton), sans-serif";
+  const sectionHeading = "var(--font-anton), var(--font-anton-ge), sans-serif";
 
   return (
     <main style={{ position: "relative", zIndex: 2 }}>
@@ -99,7 +101,7 @@ export function Finder({ initialRooms }: { initialRooms: RoomCardType[] }) {
                 background: "var(--yellow)",
               }}
             >
-              {filtered.length} rehearsal rooms found across Tbilisi. Book by the hour.
+              {t("finder.count", { count: filtered.length })}
             </div>
           </div>
 
@@ -109,7 +111,7 @@ export function Finder({ initialRooms }: { initialRooms: RoomCardType[] }) {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search rooms, neighborhoods, gear..."
+              placeholder={t("finder.search")}
               style={{
                 flex: 1,
                 border: 0,
@@ -135,40 +137,40 @@ export function Finder({ initialRooms }: { initialRooms: RoomCardType[] }) {
                 cursor: "pointer",
               }}
             >
-              CLEAR
+              {t("finder.clear")}
             </button>
           </div>
 
           {/* filters */}
           <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 14 }}>
-            <FilterRow label="GENRE">
+            <FilterRow label={t("finder.genre")}>
               {GENRES.map((g) => {
                 const active = g === "ALL" ? !genre : genre === g;
                 return (
                   <button key={g} style={chipStyle(active)} onClick={() => setGenre(g === "ALL" ? null : g)}>
-                    {g}
+                    {g === "ALL" ? t("finder.all") : g}
                   </button>
                 );
               })}
             </FilterRow>
-            <FilterRow label="PRICE">
+            <FilterRow label={t("finder.price")}>
               {PRICES.map((p) => {
                 const active = p === "ALL" ? !price : price === p;
                 return (
                   <button key={p} style={chipStyle(active)} onClick={() => setPrice(p === "ALL" ? null : (p as PriceTier))}>
-                    {p}
+                    {p === "ALL" ? t("finder.all") : p}
                   </button>
                 );
               })}
               <span style={{ width: 2, height: 26, background: "var(--ink)", opacity: 0.3, margin: "0 4px" }} />
               <button style={chipStyle(openNow)} onClick={() => setOpenNow((v) => !v)}>
-                <span style={{ fontSize: 15 }}>●</span> OPEN NOW
+                <span style={{ fontSize: 15 }}>●</span> {t("finder.open_now")}
               </button>
             </FilterRow>
-            <FilterRow label="SORT">
+            <FilterRow label={t("finder.sort")}>
               {SORTS.map(([k, l]) => (
                 <button key={k} style={chipStyle(sort === k)} onClick={() => setSort(k)}>
-                  {l}
+                  {t(l)}
                 </button>
               ))}
             </FilterRow>
@@ -195,7 +197,7 @@ export function Finder({ initialRooms }: { initialRooms: RoomCardType[] }) {
                 VIP
               </div>
               <h2 style={{ margin: 0, fontFamily: sectionHeading, color: "var(--paper)", fontSize: 38, letterSpacing: 1 }}>
-                FRONT ROW <span style={{ color: "var(--yellow)" }}>/ FEATURED</span>
+                {t("finder.front_row")} <span style={{ color: "var(--yellow)" }}>{t("finder.featured")}</span>
               </h2>
               <div style={{ flex: 1, height: 3, background: "repeating-linear-gradient(90deg, var(--red) 0 12px, transparent 12px 22px)" }} />
             </div>
@@ -212,24 +214,24 @@ export function Finder({ initialRooms }: { initialRooms: RoomCardType[] }) {
       <section style={{ position: "relative", background: "var(--paper2)", padding: "36px 28px 60px" }}>
         <div style={{ maxWidth: 1180, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-            <h2 style={{ margin: 0, fontFamily: sectionHeading, fontSize: 32, letterSpacing: 1 }}>ALL ROOMS</h2>
+            <h2 style={{ margin: 0, fontFamily: sectionHeading, fontSize: 32, letterSpacing: 1 }}>{t("finder.all_rooms")}</h2>
             <span style={{ fontFamily: "var(--font-special-elite), monospace", fontSize: 13, background: "var(--ink)", color: "var(--paper)", padding: "4px 10px" }}>
-              {regular.length} LISTED
+              {t("finder.listed", { count: regular.length })}
             </span>
             <div style={{ flex: 1, height: 3, background: "repeating-linear-gradient(90deg, var(--ink) 0 12px, transparent 12px 22px)" }} />
           </div>
 
           {filtered.length === 0 ? (
             <div style={{ textAlign: "center", padding: "60px 20px", border: "3px dashed var(--ink)", background: "var(--paper)" }}>
-              <div style={{ fontFamily: sectionHeading, fontSize: 42, transform: "rotate(-2deg)" }}>NO ROOMS. ALL QUIET.</div>
+              <div style={{ fontFamily: sectionHeading, fontSize: 42, transform: "rotate(-2deg)" }}>{t("finder.empty_title")}</div>
               <p style={{ fontFamily: "var(--font-special-elite), monospace", fontSize: 15, margin: "12px 0 18px" }}>
-                Nothing matches that search. Ease up on the filters.
+                {t("finder.empty_body")}
               </p>
               <button
                 onClick={resetFilters}
                 style={{ fontFamily: sectionHeading, letterSpacing: 1, fontSize: 16, padding: "11px 20px", background: "var(--red)", color: "var(--paper)", border: 0, cursor: "pointer", boxShadow: "4px 4px 0 var(--ink)" }}
               >
-                RESET FILTERS
+                {t("finder.reset")}
               </button>
             </div>
           ) : (
@@ -248,7 +250,7 @@ export function Finder({ initialRooms }: { initialRooms: RoomCardType[] }) {
 function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-      <span style={{ fontFamily: "var(--font-anton), sans-serif", letterSpacing: 1, fontSize: 13, background: "var(--ink)", color: "var(--paper)", padding: "4px 9px" }}>
+      <span style={{ fontFamily: "var(--font-anton), var(--font-anton-ge), sans-serif", letterSpacing: 1, fontSize: 13, background: "var(--ink)", color: "var(--paper)", padding: "4px 9px" }}>
         {label}
       </span>
       {children}

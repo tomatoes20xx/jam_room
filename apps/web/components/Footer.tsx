@@ -1,4 +1,9 @@
+"use client";
+
+import { useT } from "@/lib/i18n";
+
 export function Footer() {
+  const { t } = useT();
   return (
     <footer
       style={{
@@ -21,11 +26,11 @@ export function Footer() {
           flexWrap: "wrap",
         }}
       >
-        <div style={{ fontFamily: "var(--font-anton), sans-serif", color: "var(--paper)", fontSize: 22, letterSpacing: 1 }}>
-          JAMROOM FINDER<span style={{ color: "var(--red)" }}>.</span>
+        <div style={{ fontFamily: "var(--font-anton), var(--font-anton-ge), sans-serif", color: "var(--paper)", fontSize: 22, letterSpacing: 1 }}>
+          JAMROOM {t("brand.finder")}<span style={{ color: "var(--red)" }}>.</span>
         </div>
         <div style={{ fontFamily: "var(--font-special-elite), monospace", fontSize: 12 }}>
-          made loud in tbilisi · plug in &amp; get loud · BYO earplugs
+          {t("footer.tagline")}
         </div>
       </div>
     </footer>

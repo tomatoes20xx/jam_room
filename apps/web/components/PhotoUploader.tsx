@@ -2,13 +2,15 @@
 
 import { useRef, useState } from "react";
 import { useUploadThing } from "@/lib/uploadthing";
+import { useT } from "@/lib/i18n";
 
 export type UploadedPhoto = { url: string; key: string };
 
-const anton = "var(--font-anton), sans-serif";
+const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
 const elite = "var(--font-special-elite), monospace";
 
 export function PhotoUploader({ photos, onChange }: { photos: UploadedPhoto[]; onChange: (p: UploadedPhoto[]) => void }) {
+  const { t } = useT();
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const { startUpload, isUploading } = useUploadThing("roomImage", {
@@ -19,7 +21,7 @@ export function PhotoUploader({ photos, onChange }: { photos: UploadedPhoto[]; o
       });
       onChange([...photos, ...uploaded]);
     },
-    onUploadError: (e) => setError(e.message || "Upload failed. Is UPLOADTHING_TOKEN set on the API?"),
+    onUploadError: (e) => setError(e.message || t("photo.error")),
   });
 
   const onFiles = (files: FileList | null) => {
@@ -48,7 +50,7 @@ export function PhotoUploader({ photos, onChange }: { photos: UploadedPhoto[]; o
               type="button"
               onClick={() => onChange(photos.filter((x) => x.key !== p.key))}
               style={{ position: "absolute", top: 6, right: 6, width: 28, height: 28, border: "2px solid var(--ink)", background: "var(--paper)", color: "var(--ink)", fontFamily: anton, fontSize: 16, cursor: "pointer", lineHeight: 1 }}
-              aria-label="Remove photo"
+              aria-label={t("photo.remove")}
             >
               ×
             </button>
@@ -73,7 +75,7 @@ export function PhotoUploader({ photos, onChange }: { photos: UploadedPhoto[]; o
         >
           <div style={{ fontFamily: anton, fontSize: 30, lineHeight: 1 }}>{isUploading ? "…" : "+"}</div>
           <div style={{ fontFamily: elite, fontSize: 11, letterSpacing: 1, marginTop: 8, textAlign: "center" }}>
-            {isUploading ? "UPLOADING" : "DROP PHOTO"}
+            {isUploading ? t("photo.uploading") : t("photo.drop")}
           </div>
         </button>
       </div>

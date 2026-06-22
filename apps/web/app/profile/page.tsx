@@ -6,8 +6,9 @@ import { useEffect } from "react";
 import { signOut, useSession } from "@/lib/auth-client";
 import { Masthead } from "@/components/Masthead";
 import { Footer } from "@/components/Footer";
+import { useT } from "@/lib/i18n";
 
-const anton = "var(--font-anton), sans-serif";
+const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
 const elite = "var(--font-special-elite), monospace";
 
 function initialsOf(name: string): string {
@@ -15,6 +16,7 @@ function initialsOf(name: string): string {
 }
 
 export default function ProfilePage() {
+  const { t } = useT();
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
@@ -40,7 +42,7 @@ export default function ProfilePage() {
     role?: string;
   };
   const label = user.displayName || user.name || user.email;
-  const role = user.role === "PROVIDER" ? "ROOM OWNER" : "MUSICIAN";
+  const role = user.role === "PROVIDER" ? t("profile.role_owner") : t("profile.role_musician");
 
   const handleSignOut = async () => {
     await signOut();
@@ -102,9 +104,9 @@ export default function ProfilePage() {
           {/* actions */}
           <div style={{ marginTop: 22, display: "flex", gap: 14, flexWrap: "wrap" }}>
             {user.role === "PROVIDER" && (
-              <ActionLink href="/dashboard" label="MANAGE MY ROOMS" />
+              <ActionLink href="/dashboard" label={t("profile.manage_rooms")} />
             )}
-            <ActionLink href="/saved" label="★ SAVED ROOMS" />
+            <ActionLink href="/saved" label={t("profile.saved_rooms")} />
             <button
               onClick={handleSignOut}
               style={{
@@ -119,7 +121,7 @@ export default function ProfilePage() {
                 boxShadow: "4px 4px 0 var(--red)",
               }}
             >
-              SIGN OUT
+              {t("nav.signout")}
             </button>
           </div>
         </div>

@@ -2,15 +2,17 @@
 
 import { signIn } from "@/lib/auth-client";
 import { API_URL } from "@/lib/api";
+import { useT } from "@/lib/i18n";
 
-const anton = "var(--font-anton), sans-serif";
+const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
 
-export function GoogleButton({ label = "CONTINUE WITH GOOGLE", compact = false }: { label?: string; compact?: boolean }) {
+export function GoogleButton({ label, compact = false }: { label?: string; compact?: boolean }) {
+  const { t } = useT();
   const onClick = () =>
     signIn.social({ provider: "google", callbackURL: typeof window !== "undefined" ? window.location.origin : undefined }).catch(
       () => {
         // Likely Google OAuth isn't configured yet.
-        alert("Google sign-in is not configured. Set GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET on the API.");
+        alert(t("google.not_configured"));
       },
     );
   void API_URL;
@@ -43,7 +45,7 @@ export function GoogleButton({ label = "CONTINUE WITH GOOGLE", compact = false }
           <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.2-8.5 2.2-6.3 0-11.6-4.1-13.5-9.9l-7.9 6.2C6.4 42.6 14.6 48 24 48z" />
         </svg>
       </span>
-      {label}
+      {label ?? t("google.continue")}
     </button>
   );
 }
