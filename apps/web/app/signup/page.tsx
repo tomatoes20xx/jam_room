@@ -7,12 +7,13 @@ import type { Genre, PriceTier, RoomInput, Soundproofing } from "@jamroom/shared
 import { GENRES, SOUNDPROOFING } from "@jamroom/shared";
 import { signUp } from "@/lib/auth-client";
 import { api } from "@/lib/api";
+import { uploadFiles } from "@/lib/uploadthing";
 import { chipStyle } from "@/lib/design";
 import { Masthead } from "@/components/Masthead";
 import { Footer } from "@/components/Footer";
 import { GoogleButton } from "@/components/GoogleButton";
 import { AuthField } from "@/components/AuthField";
-import { PhotoUploader, type UploadedPhoto } from "@/components/PhotoUploader";
+import { PhotoUploader, type PendingPhoto } from "@/components/PhotoUploader";
 import { useT, type TFunc } from "@/lib/i18n";
 
 const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
@@ -51,7 +52,7 @@ export default function SignupPage() {
     "Marshall JCM800 + 4x12",
     "Ampeg SVT-CL + 8x10 fridge",
   ]);
-  const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
+  const [photos, setPhotos] = useState<PendingPhoto[]>([]);
 
   const toggleGenre = (g: Genre) =>
     setGenres((prev) => (prev.includes(g) ? prev.filter((x) => x !== g) : [...prev, g]));
@@ -94,28 +95,36 @@ export default function SignupPage() {
       return setError(err.message ?? t("signup.err_failed"));
     }
     // Create the room listing.
-    const input: RoomInput = {
-      name: pRoom,
-      neighborhood: pHood,
-      address: pAddr,
-      lat: 41.7151,
-      lng: 44.8271,
-      priceTier: priceTierFromNum(priceNum),
-      priceNum,
-      capacity: pCap || undefined,
-      roomSize: pCap || "Medium",
-      soundproof: proof,
-      hours: pHours || "Hours TBD",
-      open: true,
-      genres,
-      overview: pDesc.slice(0, 160) || `${pRoom} in ${pHood}`,
-      longOverview: pDesc,
-      gear: equip.filter(Boolean).length
-        ? [{ title: "BACKLINE", items: equip.filter(Boolean) }]
-        : [],
-      images: photos.map((p) => ({ url: p.url, key: p.key, label: "ROOM" })),
-    };
     try {
+      // Upload photos only now, as part of submitting — so abandoning the form
+      // never leaves orphaned files in uploadthing.
+      const uploaded = photos.length
+        ? await uploadFiles("roomImage", { files: photos.map((p) => p.file) })
+        : [];
+      const input: RoomInput = {
+        name: pRoom,
+        neighborhood: pHood,
+        address: pAddr,
+        lat: 41.7151,
+        lng: 44.8271,
+        priceTier: priceTierFromNum(priceNum),
+        priceNum,
+        capacity: pCap || undefined,
+        roomSize: pCap || "Medium",
+        soundproof: proof,
+        hours: pHours || "Hours TBD",
+        open: true,
+        genres,
+        overview: pDesc.slice(0, 160) || `${pRoom} in ${pHood}`,
+        longOverview: pDesc,
+        gear: equip.filter(Boolean).length
+          ? [{ title: "BACKLINE", items: equip.filter(Boolean) }]
+          : [],
+        images: uploaded.map((f) => {
+          const file = f as { ufsUrl?: string; url: string; key: string };
+          return { url: file.ufsUrl ?? file.url, key: file.key, label: "ROOM" };
+        }),
+      };
       await api.createRoom(input);
     } catch (e2) {
       // Account exists even if room creation failed; surface the issue.
@@ -279,7 +288,7 @@ export default function SignupPage() {
               </div>
 
               <SectionLabel small>{t("signup.sec_photos")}</SectionLabel>
-              <PhotoUploader photos={photos} onChange={setPhotos} />
+              <PhotoUploader photos={photos} onChange={setPhotos} disabled={busy} />
 
               <SectionLabel small>{t("signup.sec_pitch")}</SectionLabel>
               <textarea
