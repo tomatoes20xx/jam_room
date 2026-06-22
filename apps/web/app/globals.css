@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #16130d;
+  --paper: #efe9d8;
+  --paper2: #e3dac2;
+  --red: #d62828;
+  --yellow: #f4e004;
+  --dark: #16130d;
+  --bg: #cfc6ad;
+}
+
+@theme inline {
+  --font-display: var(--font-anton);
+  --font-body: var(--font-special-elite);
+  --font-marker: var(--font-permanent-marker);
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-paper2: var(--paper2);
+  --color-red: var(--red);
+  --color-yellow: var(--yellow);
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-special-elite), "Courier New", monospace;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--red);
+  color: var(--paper);
+}
+input::placeholder,
+textarea::placeholder {
+  color: #5b5443;
+  opacity: 1;
+}
+input:focus,
+textarea:focus {
+  box-shadow: 4px 4px 0 var(--red) !important;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #17140f;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--red);
+  border: 2px solid #17140f;
+}
+
+@keyframes jr-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  94% {
+    opacity: 0.55;
+  }
+  96% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 0.4;
+  }
+  98% {
+    opacity: 1;
+  }
+}
+@keyframes jr-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Film-grain overlay used on the root */
+.jr-grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  opacity: 0.16;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+.jr-marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: jr-marquee 28s linear infinite;
+}

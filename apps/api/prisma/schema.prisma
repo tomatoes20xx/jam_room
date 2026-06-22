@@ -1,0 +1,185 @@
+// Jam Room — Prisma schema
+// Better Auth owns User/Session/Account/Verification (it generates/uses these tables).
+// We extend User with role + displayName.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MUSICIAN
+  PROVIDER
+}
+
+enum PriceTier {
+  TIER_1 // $
+  TIER_2 // $$
+  TIER_3 // $$$
+}
+
+// ----------------------------------------------------------------------------
+// Auth tables (Better Auth). Field names follow Better Auth's expected schema.
+// ----------------------------------------------------------------------------
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  name          String?
+  image         String?
+  // app-specific
+  displayName   String?
+  role          Role     @default(MUSICIAN)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions Session[]
+  accounts Account[]
+  rooms    Room[]
+  reviews  Review[]
+  saved    SavedRoom[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([providerId, accountId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
+
+// ----------------------------------------------------------------------------
+// Domain tables
+// ----------------------------------------------------------------------------
+
+model Room {
+  id           String    @id @default(cuid())
+  ownerId      String
+  owner        User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name         String
+  neighborhood String
+  address      String
+  lat          Float
+  lng          Float
+  priceTier    PriceTier
+  priceNum     Int
+  capacity     String?
+  roomSize     String
+  soundproof   String
+  hours        String
+  open         Boolean   @default(true)
+  genres       String[]
+  overview     String
+  longOverview String    @default("")
+  vip          Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  images     RoomImage[]
+  gearGroups GearGroup[]
+  reviews    Review[]
+  savedBy    SavedRoom[]
+
+  @@index([ownerId])
+}
+
+model RoomImage {
+  id     String @id @default(cuid())
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  url    String
+  key    String
+  label  String @default("")
+  order  Int    @default(0)
+
+  @@index([roomId])
+}
+
+model GearGroup {
+  id     String     @id @default(cuid())
+  roomId String
+  room   Room       @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  title  String
+  order  Int        @default(0)
+  items  GearItem[]
+
+  @@index([roomId])
+}
+
+model GearItem {
+  id      String    @id @default(cuid())
+  groupId String
+  group   GearGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  text    String
+  order   Int       @default(0)
+
+  @@index([groupId])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  rating    Int
+  text      String
+  createdAt DateTime @default(now())
+
+  @@index([roomId])
+}
+
+model SavedRoom {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roomId])
+  @@index([userId])
+}
