@@ -45,6 +45,9 @@ body > div:not(.jr-grain) {
   flex: 1 0 auto;
   display: flex;
   flex-direction: column;
+  /* Match the content section that sits above the footer so the flex-grow
+     filler on short pages blends in instead of showing the darker body bg. */
+  background: var(--paper2);
 }
 
 ::selection {

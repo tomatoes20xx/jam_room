@@ -171,6 +171,14 @@ const en: Dict = {
   "dash.view": "VIEW",
   "dash.delete": "DELETE",
 
+  // new room
+  "newroom.title_pre": "List a",
+  "newroom.title_accent": "room.",
+  "newroom.subtitle": "Add a new space to your listings.",
+  "newroom.cancel": "← BACK TO DASHBOARD",
+  "newroom.signin": "Sign in as a room owner to list a room.",
+  "newroom.not_provider": "Only room owners can list rooms — your account is a musician account.",
+
   // profile
   "profile.role_owner": "ROOM OWNER",
   "profile.role_musician": "MUSICIAN",
@@ -368,6 +376,14 @@ const ka: Dict = {
   "dash.prompt_empty": "ჯერ ოთახები არ არის. განათავსე პირველი სივრცე.",
   "dash.view": "ნახვა",
   "dash.delete": "წაშლა",
+
+  // new room
+  "newroom.title_pre": "განათავსე",
+  "newroom.title_accent": "ოთახი.",
+  "newroom.subtitle": "დაამატე ახალი სივრცე შენს განცხადებებში.",
+  "newroom.cancel": "← უკან დაფაზე",
+  "newroom.signin": "შედი როგორც ოთახის მფლობელი ოთახის განსათავსებლად.",
+  "newroom.not_provider": "ოთახების განთავსება მხოლოდ მფლობელებს შეუძლიათ — შენი ანგარიში მუსიკოსის ანგარიშია.",
 
   // profile
   "profile.role_owner": "ოთახის მფლობელი",

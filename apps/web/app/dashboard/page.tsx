@@ -44,18 +44,23 @@ export default function DashboardPage() {
             </h1>
             <div style={{ flex: 1, height: 3, background: "repeating-linear-gradient(90deg, var(--ink) 0 12px, transparent 12px 22px)" }} />
             {session && (
-              <button onClick={() => signOut()} style={{ cursor: "pointer", fontFamily: anton, letterSpacing: 1, fontSize: 13, padding: "8px 14px", background: "var(--ink)", color: "var(--paper)", border: 0 }}>
-                {t("nav.signout")}
-              </button>
+              <>
+                <Link href="/rooms/new" style={{ textDecoration: "none", fontFamily: anton, letterSpacing: 1, fontSize: 13, padding: "8px 14px", background: "var(--red)", color: "var(--paper)", boxShadow: "3px 3px 0 var(--ink)" }}>
+                  {t("dash.list_room")}
+                </Link>
+                <button onClick={() => signOut()} style={{ cursor: "pointer", fontFamily: anton, letterSpacing: 1, fontSize: 13, padding: "8px 14px", background: "var(--ink)", color: "var(--paper)", border: 0 }}>
+                  {t("nav.signout")}
+                </button>
+              </>
             )}
           </div>
 
           {isPending ? null : !session ? (
             <Prompt text={t("dash.prompt_signin")} cta={t("nav.signin")} href="/login" />
           ) : error ? (
-            <Prompt text={error} cta={t("dash.list_room")} href="/signup" />
+            <Prompt text={error} cta={t("dash.list_room")} href="/rooms/new" />
           ) : rooms.length === 0 ? (
-            <Prompt text={t("dash.prompt_empty")} cta={t("dash.list_room")} href="/signup" />
+            <Prompt text={t("dash.prompt_empty")} cta={t("dash.list_room")} href="/rooms/new" />
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {rooms.map((room) => (
