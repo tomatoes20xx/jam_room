@@ -129,6 +129,36 @@ textarea:focus {
   }
 }
 
+/* Room details: two columns (room/gear left, map/details right) on wide
+   screens. On narrow screens collapse to a single column so the map and
+   details cards stack below the gear instead of being squeezed beside it. */
+.jr-detail-cols {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 34px;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .jr-detail-cols {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+}
+
+/* Room form multi-column rows. Columns come from the --cols custom property
+   set inline per row; on narrow screens collapse to a single column so the
+   inputs stack instead of overflowing the form container. */
+.jr-form-grid {
+  display: grid;
+  grid-template-columns: var(--cols);
+  gap: 18px;
+}
+@media (max-width: 640px) {
+  .jr-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Film-grain overlay used on the root */
 .jr-grain {
   pointer-events: none;

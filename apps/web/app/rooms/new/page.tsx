@@ -164,7 +164,7 @@ export default function NewRoomPage() {
                         value={v}
                         onChange={(e) => setEquip((prev) => prev.map((x, j) => (j === i ? e.target.value : x)))}
                         placeholder={t("signup.gear_placeholder")}
-                        style={{ flex: 1, border: "3px solid var(--ink)", background: "var(--paper)", fontFamily: elite, fontSize: 14, padding: "10px 13px", color: "var(--ink)", outline: "none" }}
+                        style={{ flex: 1, minWidth: 0, border: "3px solid var(--ink)", background: "var(--paper)", fontFamily: elite, fontSize: 14, padding: "10px 13px", color: "var(--ink)", outline: "none" }}
                       />
                       <button
                         type="button"
@@ -244,7 +244,11 @@ function SectionLabel({ children, small }: { children: React.ReactNode; small?: 
 }
 
 function Grid({ cols, children }: { cols: string; children: React.ReactNode }) {
-  return <div style={{ display: "grid", gridTemplateColumns: cols, gap: 18 }}>{children}</div>;
+  return (
+    <div className="jr-form-grid" style={{ "--cols": cols } as React.CSSProperties}>
+      {children}
+    </div>
+  );
 }
 
 const TIME_SLOTS = Array.from({ length: 48 }, (_, i) => {

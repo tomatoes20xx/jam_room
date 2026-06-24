@@ -166,7 +166,7 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
 
       {/* two columns */}
       <section style={{ padding: "30px 28px 0" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 34, alignItems: "start" }}>
+        <div className="jr-detail-cols" style={{ maxWidth: 1100, margin: "0 auto" }}>
           {/* LEFT */}
           <div>
             <div style={{ background: "var(--paper)", border: "3px solid var(--ink)", padding: "20px 22px", boxShadow: "6px 6px 0 var(--ink)" }}>
