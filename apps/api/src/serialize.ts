@@ -13,10 +13,10 @@ export const stringToTier: Record<PriceTier, PrismaPriceTier> = {
   $$$: "TIER_3",
 };
 
-type ImageRow = { id: string; url: string; label: string; order: number };
+type ImageRow = { id: string; url: string; key: string; label: string; order: number };
 
 function toImage(i: ImageRow): RoomImage {
-  return { id: i.id, url: i.url, label: i.label, order: i.order };
+  return { id: i.id, url: i.url, key: i.key, label: i.label, order: i.order };
 }
 
 // Loosely typed to avoid coupling to generated Prisma payload types.

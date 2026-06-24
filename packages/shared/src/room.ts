@@ -15,6 +15,7 @@ export type Review = z.infer<typeof reviewSchema>;
 export const roomImageSchema = z.object({
   id: z.string(),
   url: z.string().url(),
+  key: z.string(),
   label: z.string(),
   order: z.number().int(),
 });

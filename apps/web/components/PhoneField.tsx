@@ -54,7 +54,7 @@ export function PhoneField({
           required={required}
           value={formatGeorgian(value)}
           onChange={(e) => onChange(phoneDigits(e.target.value))}
-          placeholder="123 12 32 52"
+          placeholder="000 00 00 00"
           style={{
             flex: 1,
             border: 0,

@@ -120,28 +120,56 @@ export async function roomRoutes(app: FastifyInstance) {
       return reply.code(400).send({ error: "Invalid room", details: parsed.error.flatten() });
     }
     const d = parsed.data;
+    const id = req.params.id;
 
-    const room = await prisma.room.update({
-      where: { id: req.params.id },
-      data: {
-        name: d.name,
-        neighborhood: d.neighborhood,
-        address: d.address,
-        phone: d.phone,
-        lat: d.lat,
-        lng: d.lng,
-        priceTier: d.priceTier ? stringToTier[d.priceTier] : undefined,
-        priceNum: d.priceNum,
-        capacity: d.capacity,
-        roomSize: d.roomSize,
-        soundproof: d.soundproof,
-        hours: d.hours,
-        open: d.open,
-        genres: d.genres,
-        overview: d.overview,
-        longOverview: d.longOverview,
-      },
-      include: detailInclude,
+    const room = await prisma.$transaction(async (tx) => {
+      await tx.room.update({
+        where: { id },
+        data: {
+          name: d.name,
+          neighborhood: d.neighborhood,
+          address: d.address,
+          phone: d.phone,
+          lat: d.lat,
+          lng: d.lng,
+          priceTier: d.priceTier ? stringToTier[d.priceTier] : undefined,
+          priceNum: d.priceNum,
+          capacity: d.capacity,
+          roomSize: d.roomSize,
+          soundproof: d.soundproof,
+          hours: d.hours,
+          open: d.open,
+          genres: d.genres,
+          overview: d.overview,
+          longOverview: d.longOverview,
+        },
+      });
+
+      // Images and gear are replaced wholesale when present. Child rows
+      // (gear items) cascade-delete with their group.
+      if (d.images) {
+        await tx.roomImage.deleteMany({ where: { roomId: id } });
+        if (d.images.length) {
+          await tx.roomImage.createMany({
+            data: d.images.map((img, i) => ({ roomId: id, url: img.url, key: img.key, label: img.label, order: i })),
+          });
+        }
+      }
+      if (d.gear) {
+        await tx.gearGroup.deleteMany({ where: { roomId: id } });
+        for (const [gi, g] of d.gear.entries()) {
+          await tx.gearGroup.create({
+            data: {
+              roomId: id,
+              title: g.title,
+              order: gi,
+              items: { create: g.items.map((text, ii) => ({ text, order: ii })) },
+            },
+          });
+        }
+      }
+
+      return tx.room.findUniqueOrThrow({ where: { id }, include: detailInclude });
     });
     return { room: toRoomDetail(room) };
   });

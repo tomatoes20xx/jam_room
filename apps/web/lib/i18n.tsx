@@ -178,6 +178,7 @@ const en: Dict = {
   "dash.list_room": "LIST A ROOM",
   "dash.prompt_empty": "No rooms yet. List your first space.",
   "dash.view": "VIEW",
+  "dash.edit": "EDIT",
   "dash.delete": "DELETE",
 
   // new room
@@ -187,6 +188,14 @@ const en: Dict = {
   "newroom.cancel": "← BACK TO DASHBOARD",
   "newroom.signin": "Sign in as a room owner to list a room.",
   "newroom.not_provider": "Only room owners can list rooms — your account is a musician account.",
+
+  // edit room
+  "editroom.title_pre": "Edit",
+  "editroom.title_accent": "room.",
+  "editroom.subtitle": "Update your listing's details.",
+  "editroom.save": "SAVE CHANGES →",
+  "editroom.not_owner": "You can only edit rooms you own.",
+  "detail.edit": "EDIT ROOM",
 
   // profile
   "profile.role_owner": "ROOM OWNER",
@@ -393,6 +402,7 @@ const ka: Dict = {
   "dash.list_room": "ოთახის განთავსება",
   "dash.prompt_empty": "ჯერ ოთახები არ არის. განათავსე პირველი სივრცე.",
   "dash.view": "ნახვა",
+  "dash.edit": "რედაქტირება",
   "dash.delete": "წაშლა",
 
   // new room
@@ -402,6 +412,14 @@ const ka: Dict = {
   "newroom.cancel": "← უკან დაფაზე",
   "newroom.signin": "შედი როგორც ოთახის მფლობელი ოთახის განსათავსებლად.",
   "newroom.not_provider": "ოთახების განთავსება მხოლოდ მფლობელებს შეუძლიათ — შენი ანგარიში მუსიკოსის ანგარიშია.",
+
+  // edit room
+  "editroom.title_pre": "შეცვალე",
+  "editroom.title_accent": "ოთახი.",
+  "editroom.subtitle": "განაახლე შენი განცხადების დეტალები.",
+  "editroom.save": "ცვლილებების შენახვა →",
+  "editroom.not_owner": "შეგიძლია მხოლოდ შენი ოთახების რედაქტირება.",
+  "detail.edit": "ოთახის რედაქტირება",
 
   // profile
   "profile.role_owner": "ოთახის მფლობელი",

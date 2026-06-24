@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { RoomDetail } from "@jamroom/shared";
 import { openBadgeStyle, rotateFor, stars, tintFor } from "@/lib/design";
 import { useSaved } from "@/lib/useSaved";
+import { useSession } from "@/lib/auth-client";
 import { useT } from "@/lib/i18n";
 import { ReviewForm } from "./ReviewForm";
 
@@ -15,6 +16,8 @@ const elite = "var(--font-special-elite), monospace";
 export function RoomDetailView({ room }: { room: RoomDetail }) {
   const { t } = useT();
   const { isSaved, toggle } = useSaved();
+  const { data: session } = useSession();
+  const isOwner = (session?.user as { id?: string } | undefined)?.id === room.ownerId;
   const [slide, setSlide] = useState(0);
 
   const images = room.images;
@@ -87,20 +90,41 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
                 <span style={openBadgeStyle(room.open)}>{room.open ? t("room.open_now") : t("room.closed")}</span>
               </div>
             </div>
-            <button
-              onClick={() => toggle(room.id)}
-              style={{
-                cursor: "pointer",
-                fontFamily: anton,
-                letterSpacing: 1,
-                fontSize: 15,
-                padding: "11px 18px",
-                border: "2px solid var(--paper)",
-                ...(saved ? { background: "var(--red)", color: "var(--paper)" } : { background: "var(--paper)", color: "var(--ink)" }),
-              }}
-            >
-              ★ {saved ? t("detail.saved") : t("detail.save")}
-            </button>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              {isOwner && (
+                <Link
+                  href={`/rooms/${room.id}/edit`}
+                  style={{
+                    textDecoration: "none",
+                    fontFamily: anton,
+                    letterSpacing: 1,
+                    fontSize: 15,
+                    padding: "11px 18px",
+                    border: "2px solid var(--paper)",
+                    background: "var(--ink)",
+                    color: "var(--paper)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                  }}
+                >
+                  {t("detail.edit")}
+                </Link>
+              )}
+              <button
+                onClick={() => toggle(room.id)}
+                style={{
+                  cursor: "pointer",
+                  fontFamily: anton,
+                  letterSpacing: 1,
+                  fontSize: 15,
+                  padding: "11px 18px",
+                  border: "2px solid var(--paper)",
+                  ...(saved ? { background: "var(--red)", color: "var(--paper)" } : { background: "var(--paper)", color: "var(--ink)" }),
+                }}
+              >
+                ★ {saved ? t("detail.saved") : t("detail.save")}
+              </button>
+            </div>
           </div>
         </div>
       </section>

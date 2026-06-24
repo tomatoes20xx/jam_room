@@ -74,6 +74,9 @@ export default function DashboardPage() {
                   <Link href={`/rooms/${room.id}`} style={{ textDecoration: "none", fontFamily: anton, letterSpacing: 1, fontSize: 13, padding: "8px 14px", background: "var(--paper)", color: "var(--ink)", border: "2px solid var(--ink)" }}>
                     {t("dash.view")}
                   </Link>
+                  <Link href={`/rooms/${room.id}/edit`} style={{ textDecoration: "none", fontFamily: anton, letterSpacing: 1, fontSize: 13, padding: "8px 14px", background: "var(--ink)", color: "var(--paper)", border: 0 }}>
+                    {t("dash.edit")}
+                  </Link>
                   <button onClick={() => remove(room.id)} style={{ cursor: "pointer", fontFamily: anton, letterSpacing: 1, fontSize: 13, padding: "8px 14px", background: "var(--red)", color: "var(--paper)", border: 0 }}>
                     {t("dash.delete")}
                   </button>

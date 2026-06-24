@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import type { RoomDetail } from "@jamroom/shared";
+import { api } from "@/lib/api";
 import { useSession } from "@/lib/auth-client";
 import { Masthead } from "@/components/Masthead";
 import { Footer } from "@/components/Footer";
@@ -11,11 +14,26 @@ import { useT } from "@/lib/i18n";
 const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
 const elite = "var(--font-special-elite), monospace";
 
-export default function NewRoomPage() {
+export default function EditRoomPage() {
   const { t } = useT();
   const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const id = params.id;
   const { data: session, isPending } = useSession();
-  const role = (session?.user as { role?: string } | undefined)?.role;
+  const userId = (session?.user as { id?: string } | undefined)?.id;
+
+  const [room, setRoom] = useState<RoomDetail | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!id) return;
+    api
+      .getRoom(id)
+      .then(setRoom)
+      .catch((e) => setError(e instanceof Error ? e.message : t("dash.load_error")));
+  }, [id, t]);
+
+  const isOwner = room && userId && room.ownerId === userId;
 
   return (
     <div style={{ position: "relative", minHeight: "100vh" }}>
@@ -27,20 +45,22 @@ export default function NewRoomPage() {
               {t("newroom.cancel")}
             </Link>
             <h1 style={{ margin: "18px 0 0", fontFamily: anton, fontSize: "clamp(40px,6.5vw,80px)", lineHeight: 0.9, letterSpacing: 1, textTransform: "uppercase" }}>
-              {t("newroom.title_pre")} <span style={{ color: "var(--red)" }}>{t("newroom.title_accent")}</span>
+              {t("editroom.title_pre")} <span style={{ color: "var(--red)" }}>{t("editroom.title_accent")}</span>
             </h1>
-            <p style={{ fontFamily: elite, fontSize: 15, margin: "14px 0 0" }}>{t("newroom.subtitle")}</p>
+            <p style={{ fontFamily: elite, fontSize: 15, margin: "14px 0 0" }}>{t("editroom.subtitle")}</p>
           </div>
         </section>
 
         <section style={{ background: "var(--paper2)", padding: "38px 28px 70px", minHeight: "50vh" }}>
           <div style={{ maxWidth: 980, margin: "0 auto" }}>
-            {isPending ? null : !session ? (
+            {error ? (
+              <Guard text={error} cta={t("detail.back")} href="/dashboard" />
+            ) : isPending || !room ? null : !session ? (
               <Guard text={t("newroom.signin")} cta={t("nav.signin")} href="/login" />
-            ) : role !== "PROVIDER" ? (
-              <Guard text={t("newroom.not_provider")} cta={t("dash.view")} href="/" />
+            ) : !isOwner ? (
+              <Guard text={t("editroom.not_owner")} cta={t("dash.view")} href={`/rooms/${id}`} />
             ) : (
-              <RoomForm mode="create" onSaved={() => router.push("/dashboard")} />
+              <RoomForm mode="edit" initial={room} onSaved={(r) => router.push(`/rooms/${r.id}`)} />
             )}
           </div>
         </section>
