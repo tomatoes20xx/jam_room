@@ -30,13 +30,16 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
     : null;
 
   const soundproofLabel = t(`soundproof.${room.soundproof}`);
-  const factChips = [room.roomSize, soundproofLabel, room.hours, room.genres.join(" / ")].filter(Boolean);
+  const capacityNum = room.capacity?.match(/\d+/)?.[0];
+  const capacityValue = capacityNum
+    ? t(capacityNum === "1" ? "detail.capacity_value_one" : "detail.capacity_value", { count: capacityNum })
+    : room.capacity ?? "—";
+  const factChips = [soundproofLabel, room.hours, room.genres.join(" / ")].filter(Boolean);
   const specRows: [string, string][] = [
     [t("detail.spec_price"), t("detail.price_value", { price: room.priceNum, tier: room.priceTier })],
-    [t("detail.spec_room_size"), room.roomSize],
     [t("detail.spec_soundproofing"), soundproofLabel],
     [t("detail.spec_hours"), room.hours],
-    [t("detail.spec_capacity"), room.capacity ?? "—"],
+    [t("detail.spec_capacity"), capacityValue],
     ...(room.phone ? ([[t("detail.spec_phone"), room.phone]] as [string, string][]) : []),
   ];
 

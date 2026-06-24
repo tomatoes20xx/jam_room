@@ -76,6 +76,8 @@ const en: Dict = {
   "detail.spec_capacity": "CAPACITY",
   "detail.spec_phone": "PHONE",
   "detail.price_value": "₾{price} / hr ({tier})",
+  "detail.capacity_value": "{count} people",
+  "detail.capacity_value_one": "1 person",
   "detail.from_the_pit": "FROM THE PIT",
   "detail.reviews": "reviews",
 
@@ -289,6 +291,8 @@ const ka: Dict = {
   "detail.spec_capacity": "ტევადობა",
   "detail.spec_phone": "ტელეფონი",
   "detail.price_value": "₾{price} / სთ ({tier})",
+  "detail.capacity_value": "{count} ადამიანი",
+  "detail.capacity_value_one": "1 ადამიანი",
   "detail.from_the_pit": "მოედნიდან",
   "detail.reviews": "შეფასებები",
 
