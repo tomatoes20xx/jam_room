@@ -37,6 +37,7 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
     [t("detail.spec_soundproofing"), soundproofLabel],
     [t("detail.spec_hours"), room.hours],
     [t("detail.spec_capacity"), room.capacity ?? "—"],
+    ...(room.phone ? ([[t("detail.spec_phone"), room.phone]] as [string, string][]) : []),
   ];
 
   return (
@@ -233,6 +234,14 @@ export function RoomDetailView({ room }: { room: RoomDetail }) {
               </div>
               <div style={{ padding: "12px 14px" }}>
                 <div style={{ fontSize: 13.5, lineHeight: 1.4 }}>{room.address}</div>
+                {room.phone && (
+                  <a
+                    href={`tel:${room.phone.replace(/\s+/g, "")}`}
+                    style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6, fontFamily: elite, fontSize: 13.5, textDecoration: "none", color: "var(--ink)" }}
+                  >
+                    <span style={{ color: "var(--red)" }}>✆</span> {room.phone}
+                  </a>
+                )}
                 <a
                   href={mapHref}
                   target="_blank"

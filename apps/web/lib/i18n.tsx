@@ -74,6 +74,7 @@ const en: Dict = {
   "detail.spec_soundproofing": "SOUNDPROOFING",
   "detail.spec_hours": "HOURS",
   "detail.spec_capacity": "CAPACITY",
+  "detail.spec_phone": "PHONE",
   "detail.price_value": "₾{price} / hr ({tier})",
   "detail.from_the_pit": "FROM THE PIT",
   "detail.reviews": "reviews",
@@ -106,6 +107,7 @@ const en: Dict = {
   "signup.err_failed": "Sign up failed",
   "signup.err_room_partial": "Account created, but room save failed: {msg}",
   "signup.err_room": "Room save failed",
+  "signup.err_phone": "Enter a full phone number: +995 followed by 9 digits",
 
   // signup — done
   "signup.done_badge": "you're in",
@@ -146,6 +148,7 @@ const en: Dict = {
   "signup.field_neighborhood": "NEIGHBORHOOD",
   "signup.field_rate": "RATE (₾/HR)",
   "signup.field_capacity": "CAPACITY",
+  "signup.field_phone": "PHONE",
   "signup.field_hours": "HOURS",
   "signup.hours_from": "OPENS",
   "signup.hours_to": "CLOSES",
@@ -159,6 +162,7 @@ const en: Dict = {
   "signup.pitch_placeholder": "Tell bands what makes the room loud, weird and worth booking. Vibe, walls, backline — all of it.",
   "signup.list_room": "LIST MY ROOM →",
   "signup.ph_capacity": "12 people",
+  "signup.ph_phone": "+995 555 12 34 56",
   "signup.ph_hours": "10am – 2am daily",
   "signup.ph_address": "12 Asatiani St, Tbilisi",
   "signup.ph_neighborhood": "Sololaki",
@@ -283,6 +287,7 @@ const ka: Dict = {
   "detail.spec_soundproofing": "ხმის იზოლაცია",
   "detail.spec_hours": "საათები",
   "detail.spec_capacity": "ტევადობა",
+  "detail.spec_phone": "ტელეფონი",
   "detail.price_value": "₾{price} / სთ ({tier})",
   "detail.from_the_pit": "მოედნიდან",
   "detail.reviews": "შეფასებები",
@@ -315,6 +320,7 @@ const ka: Dict = {
   "signup.err_failed": "რეგისტრაცია ვერ მოხერხდა",
   "signup.err_room_partial": "ანგარიში შეიქმნა, მაგრამ ოთახის შენახვა ვერ მოხერხდა: {msg}",
   "signup.err_room": "ოთახის შენახვა ვერ მოხერხდა",
+  "signup.err_phone": "შეიყვანეთ სრული ნომერი: +995 და 9 ციფრი",
 
   // signup — done
   "signup.done_badge": "შემოხვედი",
@@ -355,6 +361,7 @@ const ka: Dict = {
   "signup.field_neighborhood": "უბანი",
   "signup.field_rate": "ფასი (₾/სთ)",
   "signup.field_capacity": "ტევადობა",
+  "signup.field_phone": "ტელეფონი",
   "signup.field_hours": "სამუშაო საათები",
   "signup.hours_from": "იხსნება",
   "signup.hours_to": "იკეტება",
@@ -368,6 +375,7 @@ const ka: Dict = {
   "signup.pitch_placeholder": "რა ხდის ოთახს გამორჩეულს, სასურველს და დასაჯავშნად ღირებულს? ვაიბი, კედლები, აპარატურა და ა.შ.",
   "signup.list_room": "ჩემი ოთახის განთავსება →",
   "signup.ph_capacity": "12 ადამიანი",
+  "signup.ph_phone": "+995 555 12 34 56",
   "signup.ph_hours": "10:00 – 02:00 ყოველდღე",
   "signup.ph_address": "ასათიანის ქ. 12, თბილისი",
   "signup.ph_neighborhood": "სოლოლაკი",

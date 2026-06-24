@@ -38,6 +38,7 @@ type RoomBase = {
   soundproof: string;
   hours: string;
   address: string;
+  phone: string | null;
   ownerId: string;
   avgRating: number;
   reviewCount: number;
@@ -96,6 +97,7 @@ export function toRoomDetail(r: RoomDetailInput): RoomDetail {
     soundproof: r.soundproof as RoomDetail["soundproof"],
     hours: r.hours,
     address: r.address,
+    phone: r.phone,
     ownerId: r.ownerId,
     images: [...r.images].sort((a, b) => a.order - b.order).map(toImage),
     gear,

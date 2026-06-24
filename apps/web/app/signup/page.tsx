@@ -14,6 +14,7 @@ import { Footer } from "@/components/Footer";
 import { GoogleButton } from "@/components/GoogleButton";
 import { AuthField } from "@/components/AuthField";
 import { PhotoUploader, type PendingPhoto } from "@/components/PhotoUploader";
+import { PhoneField, toFullPhone } from "@/components/PhoneField";
 import { useT, type TFunc } from "@/lib/i18n";
 
 const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
@@ -41,6 +42,7 @@ export default function SignupPage() {
   const [pPass, setPPass] = useState("");
   const [pAddr, setPAddr] = useState("");
   const [pHood, setPHood] = useState("");
+  const [pPhone, setPPhone] = useState("");
   const [pPrice, setPPrice] = useState("");
   const [pCap, setPCap] = useState("");
   const [pHours, setPHours] = useState("");
@@ -79,6 +81,9 @@ export default function SignupPage() {
 
   const submitProvider = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (pPhone.length !== 9) {
+      return setError(t("signup.err_phone"));
+    }
     setBusy(true);
     setError(null);
     const priceNum = parseInt(pPrice, 10) || 0;
@@ -105,6 +110,7 @@ export default function SignupPage() {
         name: pRoom,
         neighborhood: pHood,
         address: pAddr,
+        phone: toFullPhone(pPhone),
         lat: 41.7151,
         lng: 44.8271,
         priceTier: priceTierFromNum(priceNum),
@@ -236,6 +242,9 @@ export default function SignupPage() {
                   <AuthField label={t("signup.field_capacity")} value={pCap} onChange={(e) => setPCap(e.target.value)} placeholder={t("signup.ph_capacity")} />
                   <AuthField label={t("signup.field_hours")} value={pHours} onChange={(e) => setPHours(e.target.value)} placeholder={t("signup.ph_hours")} />
                 </Grid>
+                <div style={{ marginTop: 18 }}>
+                  <PhoneField label={t("signup.field_phone")} value={pPhone} onChange={setPPhone} required />
+                </div>
               </div>
               <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                 <span style={{ fontFamily: elite, fontSize: 12, opacity: 0.7 }}>{t("signup.soundproofing")}</span>

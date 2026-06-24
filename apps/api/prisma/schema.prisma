@@ -103,6 +103,7 @@ model Room {
   name         String
   neighborhood String
   address      String
+  phone        String?
   lat          Float
   lng          Float
   priceTier    PriceTier

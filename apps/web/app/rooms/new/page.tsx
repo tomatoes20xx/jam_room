@@ -13,6 +13,7 @@ import { Masthead } from "@/components/Masthead";
 import { Footer } from "@/components/Footer";
 import { AuthField } from "@/components/AuthField";
 import { PhotoUploader, type PendingPhoto } from "@/components/PhotoUploader";
+import { PhoneField, toFullPhone } from "@/components/PhoneField";
 import { useT } from "@/lib/i18n";
 
 const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
@@ -27,6 +28,7 @@ export default function NewRoomPage() {
   const [pRoom, setPRoom] = useState("");
   const [pAddr, setPAddr] = useState("");
   const [pHood, setPHood] = useState("");
+  const [pPhone, setPPhone] = useState("");
   const [pPrice, setPPrice] = useState("");
   const [pCap, setPCap] = useState("");
   const [pHoursFrom, setPHoursFrom] = useState("");
@@ -46,6 +48,10 @@ export default function NewRoomPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (pPhone.length !== 9) {
+      setError(t("signup.err_phone"));
+      return;
+    }
     setBusy(true);
     setError(null);
     const priceNum = parseInt(pPrice, 10) || 0;
@@ -60,6 +66,7 @@ export default function NewRoomPage() {
         name: pRoom,
         neighborhood: pHood,
         address: pAddr,
+        phone: toFullPhone(pPhone),
         lat: 41.7151,
         lng: 44.8271,
         priceTier: priceTierFromNum(priceNum),
@@ -125,6 +132,9 @@ export default function NewRoomPage() {
                   <AuthField label={t("signup.field_address")} value={pAddr} onChange={(e) => setPAddr(e.target.value)} placeholder={t("signup.ph_address")} required />
                   <AuthField label={t("signup.field_neighborhood")} value={pHood} onChange={(e) => setPHood(e.target.value)} placeholder={t("signup.ph_neighborhood")} required />
                 </Grid>
+                <div style={{ marginTop: 18 }}>
+                  <PhoneField label={t("signup.field_phone")} value={pPhone} onChange={setPPhone} required />
+                </div>
                 <div style={{ marginTop: 18 }}>
                   <Grid cols="1fr 1fr 1fr 1fr">
                     <AuthField label={t("signup.field_rate")} value={pPrice} onChange={(e) => setPPrice(e.target.value)} placeholder="30" type="number" min={0} step={1} inputMode="numeric" required />
