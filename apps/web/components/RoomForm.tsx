@@ -9,6 +9,7 @@ import { chipStyle } from "@/lib/design";
 import { AuthField } from "@/components/AuthField";
 import { PhotoUploader, type PendingPhoto } from "@/components/PhotoUploader";
 import { PhoneField, toFullPhone } from "@/components/PhoneField";
+import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { useT } from "@/lib/i18n";
 
 const anton = "var(--font-anton), var(--font-anton-ge), sans-serif";
@@ -45,6 +46,8 @@ export function RoomForm({
   const [pRoom, setPRoom] = useState(initial?.name ?? "");
   const [pAddr, setPAddr] = useState(initial?.address ?? "");
   const [pHood, setPHood] = useState(initial?.neighborhood ?? "");
+  const [pLat, setPLat] = useState<number | null>(initial?.lat ?? null);
+  const [pLng, setPLng] = useState<number | null>(initial?.lng ?? null);
   const [pPhone, setPPhone] = useState(localPhone(initial?.phone));
   const [pPrice, setPPrice] = useState(initial ? String(initial.priceNum) : "");
   const [pCap, setPCap] = useState(initial?.capacity?.match(/\d+/)?.[0] ?? "");
@@ -94,8 +97,8 @@ export function RoomForm({
         neighborhood: pHood,
         address: pAddr,
         phone: toFullPhone(pPhone),
-        lat: initial?.lat ?? 41.7151,
-        lng: initial?.lng ?? 44.8271,
+        lat: pLat ?? initial?.lat ?? 41.7151,
+        lng: pLng ?? initial?.lng ?? 44.8271,
         priceTier: priceTierFromNum(priceNum),
         priceNum,
         capacity: pCap || undefined,
@@ -133,7 +136,19 @@ export function RoomForm({
 
       <SectionLabel small>{t("signup.sec_space")}</SectionLabel>
       <Grid cols="2fr 1fr">
-        <AuthField label={t("signup.field_address")} value={pAddr} onChange={(e) => setPAddr(e.target.value)} placeholder={t("signup.ph_address")} required />
+        <AddressAutocomplete
+          label={t("signup.field_address")}
+          value={pAddr}
+          onChange={setPAddr}
+          onSelect={(p) => {
+            setPAddr(p.address);
+            setPLat(p.lat);
+            setPLng(p.lng);
+            if (p.neighborhood) setPHood(p.neighborhood);
+          }}
+          placeholder={t("signup.ph_address")}
+          required
+        />
         <AuthField label={t("signup.field_neighborhood")} value={pHood} onChange={(e) => setPHood(e.target.value)} placeholder={t("signup.ph_neighborhood")} required />
       </Grid>
       <div style={{ marginTop: 18 }}>
